@@ -5,7 +5,7 @@ on the machine if it is not set.  Currently the number of threads is hard-coded 
 the build script when running "ctest", but users can customize it at runtime for other
 runs.
 
-## Building the kernel
+## Building the kernel (HPC systems with modules)
 
 This kernel uses an out-of-source cmake build, meaning that the build must be done in 
 directory that is not in the source tree.
@@ -21,7 +21,26 @@ cmake -DCMAKE_BUILD_TYPE=<debug | release> ..
 make VERBOSE=1
 ```
 
+### Building the kernel (Systems without modules)
+
+```
+rm -rf build ; mkdir build ; cd build
+export CC=<gcc | icc>
+export FC=<gfortran | ifort> 
+cmake -DCMAKE_BUILD_TYPE=<debug | release> ..
+make VERBOSE=1
+```
+
+### Additional description for build configurations 
+
+Some alterations could potentially need to be made in regards to the CC and FC compilers  
+* export CC= < appropriate compiler version being used (ie. gcc-10) > 
+* export FC= < appropriate compiler being used >
+
+
 ## Testing the kernel
+
+Ensure system is quipped with LFS to run the .nl files in test/test_input 
 
 To run the test suite (from the build directory):
 
