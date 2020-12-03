@@ -5,10 +5,19 @@ on the machine if it is not set.  Currently the number of threads is hard-coded 
 the build script when running "ctest", but users can customize it at runtime for other
 runs.
 
-## Building the kernel (HPC systems with modules)
+# Building the kernel
 
 This kernel uses an out-of-source cmake build, meaning that the build must be done in 
 directory that is not in the source tree.
+
+## Dependencies 
+* C Compiler
+* Fortran Compiler
+* NetCDF 
+* cmake 
+* git-lfs 
+
+## Machines that use modules to manage software
 
 The build procedure is (from the directory containing this file):
 
@@ -20,32 +29,31 @@ export FC=<gfortran | ifort>
 cmake -DCMAKE_BUILD_TYPE=<debug | release> ..
 make VERBOSE=1
 ```
+You may need to load modules for your compiler, NetCDF, and/or cmake before following the steps above.
 
-### Building the kernel (Systems without modules)
+For example, "module load intel netcdf cmake".
+
+## Machines that do not use modules to manage software
+
+The build procedure is (from the directory containing this file):
 
 ```
 rm -rf build ; mkdir build ; cd build
-export CC=<gcc | icc>
-export FC=<gfortran | ifort> 
+export CC=<name of C compiler>
+export FC=<name of fortran compiler> 
 cmake -DCMAKE_BUILD_TYPE=<debug | release> ..
 make VERBOSE=1
 ```
+If NetCDF is not installed in a standard location where cmake can find it, you may need to add the paths where your NetCDF and NetCDF-Fortran are installed to the CMAKE_PREFIX_PATH variable. For example:
 
-### Additional description for build configurations 
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/netcdf:/path/to/netcdf-fortran
 
-Some alterations could potentially need to be made in regards to the CC and FC compilers  
 
-Confirm and identifiy which compiler will be used on the system.  
+### Building on a Mac
 
-* export CC= < appropriate compiler & version  > 
-* export FC= < appropriate compiler & version  >
-
-For Example : ```export CC=gcc-10```
-
+By default, gcc points to the clang compiler on Mac. The clang compiler is not yet supported. To use the GNU compiler on Mac, depending on how the GNU compiler was installed, you may need to specify the c compiler name as gcc-$version. For example: gcc-10
 
 ## Testing the kernel
-
-Ensure system is quipped with LFS to run the .nl files in test/test_input 
 
 To run the test suite (from the build directory):
 
