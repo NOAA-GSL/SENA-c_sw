@@ -34,8 +34,13 @@ make VERBOSE=1
 ### Additional description for build configurations 
 
 Some alterations could potentially need to be made in regards to the CC and FC compilers  
-* export CC= < appropriate compiler version being used (ie. gcc-10) > 
-* export FC= < appropriate compiler being used >
+
+Confirm and identifiy which compiler will be used on the system.  
+
+* export CC= < appropriate compiler & version  > 
+* export FC= < appropriate compiler & version  >
+
+For Example : ```export CC=gcc-10```
 
 
 ## Testing the kernel
