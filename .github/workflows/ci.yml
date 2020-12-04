@@ -21,10 +21,6 @@ jobs:
         with:
           lfs: true
       
-      # Install CLI tools for mac 
-      - name: Install CLI Tools
-        run: xcode-select --install
-      
       #Install homebrew
       - name: Install Homebrew 
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
