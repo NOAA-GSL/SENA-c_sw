@@ -51,8 +51,31 @@ jobs:
           nf-config --version
       
       # Test debug mode 
-      
+      - name: Test c_sw Debug 
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc-10
+          export FC=gfortran          
+          cmake -DCMAKE_BUILD_TYPE=debug ..
+          make
+          ctest
+          
       # Test release mode 
+      - name: Test c_sw Release
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc-10
+          export FC=gfortran          
+          cmake -DCMAKE_BUILD_TYPE=release ..
+          make
+          ctest       
+       
   ubuntu:
     # Run on ubuntu-latest
     runs-on: ubuntu-latest
