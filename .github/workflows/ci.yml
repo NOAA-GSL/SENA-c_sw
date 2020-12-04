@@ -10,7 +10,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  macos:
     # The type of runner that the job will run on
     runs-on: macos-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -57,7 +57,7 @@ jobs:
       # Test debug mode 
       
       # Test release mode 
-
+  ubuntu:
     # Run on ubuntu-latest
     runs-on: ubuntu-latest
 
