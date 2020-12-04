@@ -1,7 +1,9 @@
+name: CI 
 # events but only for the develop branch
 on:
   push:
-    branches: [ develop ]
+    # feature/githubWorkflowUpdates branch is added here to test changes to CI
+    branches: [ develop, feature/githubWorkflowUpdates ]
   pull_request:
     branches: [ develop ]
 
@@ -10,6 +12,42 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
+    runs-on: macos-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository (and LFS objects)
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      
+      # Install CLI tools for mac 
+      - name: Install CLI Tools
+        run: xcode-select --install
+      
+      #Install homebrew
+      - name: Install Homebrew 
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      
+      # Install GCC 
+      
+      # Install gfortran
+      
+      # Install netCDF
+      
+      # Install netCDF-Fortran 
+      
+      # Get NetCDF versions
+      #- name: Get NetCDF version
+        #run: |
+          #nc-config --version
+          #nf-config --version
+      
+      # Test debug mode 
+      
+      # Test release mode 
+
+    # Run on ubuntu-latest
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
