@@ -10,7 +10,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  macos:
     # The type of runner that the job will run on
     runs-on: macos-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -20,10 +20,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           lfs: true
-      
-      # Install CLI tools for mac 
-      - name: Install CLI Tools
-        run: xcode-select --install
       
       #Install homebrew
       - name: Install Homebrew 
@@ -55,9 +51,32 @@ jobs:
           nf-config --version
       
       # Test debug mode 
-      
+      - name: Test c_sw Debug 
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc-10
+          export FC=gfortran          
+          cmake -DCMAKE_BUILD_TYPE=debug ..
+          make
+          ctest
+          
       # Test release mode 
-
+      - name: Test c_sw Release
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc-10
+          export FC=gfortran          
+          cmake -DCMAKE_BUILD_TYPE=release ..
+          make
+          ctest       
+       
+  ubuntu:
     # Run on ubuntu-latest
     runs-on: ubuntu-latest
 
