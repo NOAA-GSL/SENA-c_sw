@@ -1,15 +1,13 @@
 name: CI 
-# events but only for the develop branch
 on:
   push:
-    # feature/githubWorkflowUpdates branch is added here to test changes to CI
-    branches: [ develop, feature/githubWorkflowUpdates ]
+    branches: [ develop ]
   pull_request:
     branches: [ develop ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
+  # This workflow contains multiple jobs for different operating systems
   macos:
     # The type of runner that the job will run on
     runs-on: macos-latest
@@ -21,7 +19,7 @@ jobs:
         with:
           lfs: true
       
-      #Install homebrew
+      # Install homebrew (package manager for macOS/linux)
       - name: Install Homebrew 
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       
@@ -35,11 +33,8 @@ jobs:
         
       # Install netCDF
       - name: Install netCDF 
-        run: brew install netcdf
-        
-      # Install netCDF-Fortran 
-    
-        
+        run: brew install netcdf 
+            
       # Install CMake
       - name: Install CMake
         run: brew install cmake
