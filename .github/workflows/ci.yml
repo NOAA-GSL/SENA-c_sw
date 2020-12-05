@@ -1,4 +1,5 @@
 name: CI 
+# events but only for the develop branch
 on:
   push:
     branches: [ develop ]
@@ -19,7 +20,7 @@ jobs:
         with:
           lfs: true
       
-      # Install homebrew (package manager for macOS/linux)
+      # Install homebrew 
       - name: Install Homebrew 
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       
