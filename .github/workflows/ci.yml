@@ -2,7 +2,7 @@ name: CI for c_sw
 # triggered events for the develop branch
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, feature/githubWorkflowUpdates ]
   pull_request:
     branches: [ develop ]
 
