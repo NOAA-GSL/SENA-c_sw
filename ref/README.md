@@ -14,8 +14,8 @@ runs.
 ## Dependencies
 The following packages are required for building and running this kernel:
 
-* A C compiler
-* A Fortran compiler
+* C compiler
+* Fortran compiler
 * [netcdf-c](https://www.unidata.ucar.edu/downloads/netcdf/)
 * [netcdf-fortran](https://www.unidata.ucar.edu/downloads/netcdf/)
 * [cmake](https://cmake.org/download/)
@@ -54,8 +54,8 @@ directory that is not in the source tree.
 
 ### Basic build procedure (from the directory containing this file)
 
-The basic build steps are as follows.  **NOTE**: Make sure not to omit the two dots at the end
-of the `cmake` step.
+The basic build steps are as follows (**NOTE**: Make sure not to omit the two dots at the end
+of the `cmake` step.):
 
 ```bash
 $ rm -rf build ; mkdir build ; cd build
@@ -72,7 +72,7 @@ See below for more information.
 ### Machines that use modules to manage software
 
 Most HPC systems use modules to manage software.  Make sure you have loaded the versions of
-the compiler and software you want to use before running the steps above.  This will allow build
+the compiler and software you want to use before running the build steps above.  This will allow build
 dependencies to be found properly.  For example:
 
 ```bash
@@ -86,13 +86,13 @@ may need to add their installation paths to the `CMAKE_PREFIX_PATH` before runni
 above. For example:
 
 ```bash
-$ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/netcdf:/path/to/netcdf-fortran`
+$ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/netcdf:/path/to/netcdf-fortran
 ```
 
 ### Building on a Mac
 
 By default, gcc points to the clang compiler on Mac.  To use the GNU compiler on Mac, depending
-on how the GNU compiler was installed, you may need to specify the c compiler name as gcc-$version.
+on how the GNU compiler was installed, you may need to specify the C compiler name as gcc-$version.
 For example:
 
 ```bash
@@ -127,9 +127,10 @@ $ ctest -VV -R regression_12x24
 
 ## Build and test script
 
-For convenience, a build script is provided that builds the code and runs the test suite:
+For convenience, a build script is provided that builds the code and runs the test suite.
 
-**(NOTE: This script may need to be modified, depending on how modules are set up on your system)**
+**(NOTE: This script is written for machines that use modules and it may need to be modified,
+depending on how modules are set up on your system)**
 
 ```bash
 $ ./build.sh <gcc | intel> <debug | release>
@@ -168,12 +169,12 @@ $ exe/c_sw ../test/test_input/c_sw_12x24.nl
 
 ## Troubleshooting
 
-1. All test fail on my machine
+1. All tests fail on my machine.
 
 Check to make sure git-lfs is installed and that all files in `data/inputs` are NetCDF 
-data files and not text. Run `git lfs pull` to download NetCDF files if necessary.
+data files and are not text. Run `git lfs pull` to download NetCDF files if necessary.
 
-2. I get `Skipping object checkout, Git LFS is not installed. ` when running `git lfs pull`
+2. I get `Skipping object checkout, Git LFS is not installed.` when running `git lfs pull`
 
 Run `git lfs install` to perform the one-time installation that git-lfs requires per user per machine.
 
@@ -183,4 +184,4 @@ Your version of git does not support git-lfs. Install git-lfs or load a version 
 
 4. I get `git-lfs smudge -- 'data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.
 
-Your versino of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
+Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
