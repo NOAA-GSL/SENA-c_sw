@@ -189,3 +189,7 @@ Your version of git does not support git-lfs. Install git-lfs or load a version 
 4. I get `git-lfs smudge -- 'data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.
 
 Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
+
+5. I get unresolved symbols when testing / running the kernel
+
+You probably need to add the paths of your compiler and/or NetCDF libraries to `LD_LIBRARY_PATH`.
