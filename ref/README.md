@@ -174,23 +174,23 @@ $ exe/c_sw ../test/test_input/c_sw_12x24.nl
 
 ## Troubleshooting
 
-1. All tests fail on my machine.
+1. **All tests fail on my machine.**
 
     Check to make sure git-lfs is installed and that all files in `data/inputs` are NetCDF 
     data files and are not text. Run `git lfs pull` to download NetCDF files if necessary.
 
-2. I get `Skipping object checkout, Git LFS is not installed.` when running `git lfs pull`
+2. **I get `Skipping object checkout, Git LFS is not installed.` when running `git lfs pull`**
 
     Run `git lfs install` to perform the one-time installation that git-lfs requires per user per machine.
 
-3. I get `git: 'lfs' is not a git command.` when running `git lfs pull`
+3. **I get `git: 'lfs' is not a git command.` when running `git lfs pull`**
 
     Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
 
-4. I get `git-lfs smudge -- 'data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.
+4. **I get `git-lfs smudge -- 'data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.**
 
     Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
 
-5. I get unresolved symbols when testing / running the kernel
+5. **I get unresolved symbols when testing / running the kernel**
 
     You probably need to add the paths of your compiler and/or NetCDF libraries to `LD_LIBRARY_PATH`.
