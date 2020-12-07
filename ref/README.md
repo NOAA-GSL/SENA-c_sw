@@ -101,9 +101,11 @@ $ export CC=gcc-10
 
 ## Testing the kernel
 
-First, set the number of threads you want to use for the tests. For example:
+First, set the OpenMP variables, including number of threads you want to use for the tests. For example:
 
 ```bash
+$ export OMP_PLACES=cores
+$ export OMP_PROC_BIND=close
 $ export OMP_NUM_THREADS=4
 ```
 
@@ -147,6 +149,8 @@ $ make install
 To run the installed executable (for example):
 
 ```bash
+$ export OMP_PLACES=cores
+$ export OMP_PROC_BIND=close
 $ export OMP_NUM_THREADS=4
 $ exe/c_sw ../test/test_input/c_sw_12x24.nl
 ```
