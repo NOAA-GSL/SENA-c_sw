@@ -1,3 +1,7 @@
+[![Actions Status](https://github.com/NOAA-GSL/SENA-c_sw/workflows/Mac%20OS%20Build/badge.svg)](https://github.com/NOAA-GSL/SENA-c_sw/actions)
+[![Actions Status](https://github.com/NOAA-GSL/SENA-c_sw/workflows/Ubuntu%20Build/badge.svg)](https://github.com/NOAA-GSL/SENA-c_sw/actions)
+
+
 ```
 This repository is a scientific product and is not official communication
 of the National Oceanic and Atmospheric Administration, or the United States
