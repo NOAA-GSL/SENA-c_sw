@@ -194,13 +194,13 @@ $ exe/c_sw ../test/test_input/c_sw_12x24.nl
 5. I get unresolved symbols when testing / running the kernel
 
     If you are on a machine that uses modules to manage software, you probably need to load the modules
-    for your compiler and/or NetCDF (make sure to use the same modules to build, test, and run):
+    for your compiler and/or NetCDF **(make sure to use the same modules to build, test, and run)**.  For example:
     ```bash
     $ module load intel netcdf
     ```
 
-    If you are on a machine that does not use modules, ou probably need to add the paths of your compiler
-    and/or NetCDF libraries to `LD_LIBRARY_PATH`:
+    If you are on a machine that does not use modules, you probably need to add the paths of your compiler
+    and/or NetCDF libraries to `LD_LIBRARY_PATH`.  For example:
     ```bash
     $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/netcdf-c/lib:/path/to/netcdf-fortran/lib
     ```
