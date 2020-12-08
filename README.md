@@ -1,5 +1,10 @@
+![MacOSBuild][MacOSBuild-badge]
+![UbuntuBuild][UbuntuBuild-badge]
+
 [![Actions Status](https://github.com/NOAA-GSL/SENA-c_sw/workflows/Mac%20OS%20Build/badge.svg)](https://github.com/NOAA-GSL/SENA-c_sw/actions)
 [![Actions Status](https://github.com/NOAA-GSL/SENA-c_sw/workflows/Ubuntu%20Build/badge.svg)](https://github.com/NOAA-GSL/SENA-c_sw/actions)
+[MacOSBuild-badge]: https://github.com/NOAA-GSL/SENA-c_sw/workflows/Mac%20OS%20Build/badge.svg?branch=develop
+[UbuntuBuild-badge]: https://github.com/NOAA-GSL/SENA-c_sw/workflows/Ubuntu%20Build/badge.svg?branch=develop
 
 
 ```
