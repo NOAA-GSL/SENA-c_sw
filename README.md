@@ -1,5 +1,4 @@
-![Ubuntu Build](https://github.com/NOAA-GSL/SENA-c_sw/workflows/Ubuntu%20Build/badge.svg?branch=develop)
-![Mac OS Build](https://github.com/NOAA-GSL/SENA-c_sw/workflows/Mac%20OS%20Build/badge.svg?branch=develop)
+![CI for c_sw](https://github.com/NOAA-GSL/SENA-c_sw/workflows/CI%20for%20c_sw/badge.svg?branch=develop)
 
 ```
 This repository is a scientific product and is not official communication
