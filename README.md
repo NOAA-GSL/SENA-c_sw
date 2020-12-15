@@ -14,13 +14,13 @@ Commerce. The Department of Commerce seal and logo, or the seal and logo of
 a DOC bureau, shall not be used in any manner to imply endorsement of any
 commercial product or activity by DOC or the United States Government.
 ```
-```
-This project contains derivative works from the [Geophysical Fluid Dynamics
-Laboratory](http://www.gfdl.noaa.gov/) GitHub projects for the [FV3 dynamical 
-core](https://www.github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere).  As such, 
-licensing ascribed to those projects remains in effect and the original 
+
+This project contains derivative works from the 
+[Geophysical Fluid Dynamics Laboratory](http://www.gfdl.noaa.gov/)
+ GitHub projects for the 
+[FV3 dynamical core](https://www.github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere).
+  As such, licensing ascribed to those projects remains in effect and the original 
 licensing restrictions and allowances are still applicable.
-```
 
 # Overview
 
