@@ -6,9 +6,9 @@
 #include <omp.h>
 #endif
 
+#ifndef __APPLE__
 extern void runnable (cpu_set_t *, int *, int *);
 
-#ifndef __APPLE__
 void print_affinity_ ()
 {
   char hnbuf[64];
