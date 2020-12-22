@@ -33,10 +33,6 @@ jobs:
       # Install netCDF
       - name: Install netCDF 
         run: brew install netcdf 
-            
-      # Install CMake
-      - name: Install CMake
-        run: brew install cmake
       
       # Get NetCDF versions
       - name: Get NetCDF version
