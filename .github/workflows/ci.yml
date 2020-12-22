@@ -30,6 +30,10 @@ jobs:
       - name: Install GCC
         run: brew install gcc
         
+      # Install gfortran
+      - name: Install gfortran	
+        run: brew install --cask gfortran
+        
       # Install netCDF
       - name: Install netCDF 
         run: brew install netcdf 
