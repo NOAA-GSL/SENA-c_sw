@@ -28,7 +28,7 @@ contains
     if (mode =="r") then
       call nc_check(nf90_open(trim(filename), NF90_NOWRITE, ncFileID))
     elseif (mode=="w") then
-      call nc_check(nf90_create(trim(filename), NF90_CLOBBER, ncFileID))
+      call nc_check(nf90_create(trim(filename), OR(NF90_CLOBBER,NF90_NETCDF4), ncFileID))
     else
       write(*,*) "ERROR: Unsupported mode for open_file"
       stop 1
