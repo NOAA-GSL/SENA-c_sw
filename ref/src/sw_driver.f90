@@ -51,7 +51,7 @@ program sw_driver
   ! Print out configuration settings
   write(*, '(A,I0,A,I0)') 'Problem size = ', ie - is + 1, "x", je - js + 1
   write(*, '(A,I0)') 'nthreads = ', nthreads
-  ret = print_affinity(0)
+  ret = print_affinity()
 
   ! Print the input state
   call print_state("Input State")

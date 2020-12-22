@@ -1,3 +1,5 @@
+![CI for c_sw](https://github.com/NOAA-GSL/SENA-c_sw/workflows/CI%20for%20c_sw/badge.svg?branch=develop)
+
 ```
 This repository is a scientific product and is not official communication
 of the National Oceanic and Atmospheric Administration, or the United States
@@ -12,6 +14,13 @@ Commerce. The Department of Commerce seal and logo, or the seal and logo of
 a DOC bureau, shall not be used in any manner to imply endorsement of any
 commercial product or activity by DOC or the United States Government.
 ```
+
+This project contains derivative works from the 
+[Geophysical Fluid Dynamics Laboratory](http://www.gfdl.noaa.gov/)
+ GitHub projects for the 
+[FV3 Dynamical Core](https://www.github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere).
+  As such, licensing ascribed to those projects remains in effect and the original 
+licensing restrictions and allowances are still applicable.
 
 # Overview
 
