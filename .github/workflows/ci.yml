@@ -48,7 +48,7 @@ jobs:
           mkdir build
           cd build
           export CC=gcc-10
-          export FC=gfortran          
+          export FC=gfortran-10          
           cmake -DCMAKE_BUILD_TYPE=debug ..
           make
           ctest
