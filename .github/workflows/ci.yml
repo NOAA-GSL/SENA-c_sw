@@ -5,6 +5,7 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
+  workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 # This workflow contains multiple jobs for different operating systems
@@ -25,10 +26,13 @@ jobs:
       # Install homebrew 
       - name: Install Homebrew 
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+<<<<<<< HEAD
       
       # Install GCC 
       - name: Install GCC
         run: brew install gcc
+=======
+>>>>>>> 55e9f60a8537f47ea201fe1913bb915794b07c61
         
       # Install netCDF
       - name: Install netCDF 
