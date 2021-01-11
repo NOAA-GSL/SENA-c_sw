@@ -10,7 +10,7 @@ recommended to view this document on [GitHub](https://github.com/NOAA-GSL/SENA-c
 
 [How to Contribute](#how-to-contribute)
 
-[Branch Management](#repository-branch-management)
+[Branch Management](#branch-management)
 
 [Pull Request Rules and Guidlines](#pull-request-rules-and-guidelines)
 
@@ -61,7 +61,7 @@ together.
 * Do not group unrelated changes together; create separate branches and submit
 pull requests for them separately.
 
-## Fortran Style Guild
+## Fortran Style Guide
 
 Unfortunately, there appears not to be a reliable linter for Fortran that can be
 used to automate conformance of Fortran coding style. The code in this repository
