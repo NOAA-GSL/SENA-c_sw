@@ -30,7 +30,7 @@ pull request.
 ## Contributing an Alternative Implementation
 
 Contributors who wish to provide an alternative implementation of `c_sw`
-must do so by issuing a Pull Request to the `develop` branch from their
+must do so by issuing a pull request to the `develop` branch from their
 own forks of this repository. Write access to this repository can not be
 granted for external collaborators.
 
