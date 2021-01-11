@@ -3,7 +3,8 @@
 NOTE: If you are reading this with a plain text editor, please note that this 
 document is formatted with Markdown syntax elements.  See 
 https://www.markdownguide.org/cheat-sheet/ for more information. It is
-recommended to view this document on [GitHub](https://github.com/NOAA-GSL/SENA-c_sw)
+recommended to view [this document](https://github.com/NOAA-GSL/SENA-c_sw/blob/develop/CONTRIBUTING.md)
+on GitHub.
 
 
 ## Contents
