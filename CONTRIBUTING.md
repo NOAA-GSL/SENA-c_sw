@@ -10,9 +10,11 @@ recommended to view this document on [GitHub](https://github.com/NOAA-GSL/SENA-c
 
 [How to Contribute](#how-to-contribute)
 
+[Contributing an Alternative Implementation](#contributing an alternative implementation)
+
 [Branch Management](#branch-management)
 
-[Pull Request Rules and Guidlines](#pull-request-rules-and-guidelines)
+[Pull Request Rules and Guidelines](#pull-request-rules-and-guidelines)
 
 [Fortran Style Guide](#fortran-style-guide)
 
@@ -24,6 +26,25 @@ requests will be reviewed and evaluated based on the technical merit of the
 proposed changes as well as conformance to the style guidelines outlined in this
 document. Code reviewers may request changes as a condition of acceptance of the
 pull request.
+
+## Contributing an Alternative Implementation
+
+Contributors who wish to provide an alternative implementation of `c_sw`
+must do so by issuing a Pull Request to the `develop` branch from their
+own forks of this repository. Write access to this repository can not be
+granted for external collaborators.
+
+All pull requests for new implementations must include:
+
+* A build system that functions across platforms and (if applicable) across
+multiple compilers.
+* Source code that is well written, properly formatted, and documented.
+* A test suite that passes and duplicates the tests that are run in the
+reference implementation. At present, 11 digits of accuracy are expected.
+* A GitHub Actions configuration to automate the new implementation's
+test suite.
+* A documentation README.md describing the new implementation, including how
+to run and test it.
 
 ## Branch Management
 
