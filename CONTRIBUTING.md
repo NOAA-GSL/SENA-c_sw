@@ -10,7 +10,7 @@ recommended to view this document on [GitHub](https://github.com/NOAA-GSL/SENA-c
 
 [How to Contribute](#how-to-contribute)
 
-[Contributing an Alternative Implementation](#contributing an alternative implementation)
+[Contributing an Alternative Implementation](#contributing-an-alternative-implementation)
 
 [Branch Management](#branch-management)
 
