@@ -247,32 +247,25 @@ The following rules apply when modifying existing code, or contributing new code
   ```
   ! Use this
   program foo
-
   end program foo
-
-  module bar
- 
-  contains
-
-    subroutine alpha
-
-    end subroutine alpha
-
-  end module bar
-
 
   ! Instead of
   program foo
-
   end program
+  ```
 
-  module bar
- 
-  contains
+  And
 
-    subroutine alpha
+  ```
+  ! Use this
+  module foo
+    subroutine bar
+    end subroutine bar
+  end module foo
 
+  ! Instead of
+  module foo
+    subroutine bar
     end subroutine
-
   end module
   ```
