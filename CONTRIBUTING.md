@@ -125,7 +125,7 @@ The following rules apply when modifying existing code, or contributing new code
   end subroutine bar
   end module foo
 
-* Use two spaces to indent all code inside `subroutine` and `function`, `if`, `do`, `while`, etc.
+* Use two spaces to indent all code inside `subroutine` and `function`
 
   ```
   ! Use this
