@@ -151,7 +151,6 @@ The following rules apply when modifying existing code, or contributing new code
       write(*, *) "Bar"
       bar = bar + 1
     end do
-    end if
   end if
 
   ! Instead of
@@ -160,7 +159,6 @@ The following rules apply when modifying existing code, or contributing new code
   write(*, *) "Bar"
   bar = bar + 1
   end do
-  end if
   end if
 
   ! Please do not do this, either
