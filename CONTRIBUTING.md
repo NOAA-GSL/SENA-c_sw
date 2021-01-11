@@ -18,11 +18,12 @@ recommended to view this document on [GitHub](https://github.com/NOAA-GSL/SENA-c
 
 ## How to Contribute
 
-Contributions to c_sw will be accepted via pull request, either from branches in
-this repository, or from a fork of this repository. Pull requests will be reviewed
-and evaluated based on the technical merit of the proposed changes as well as
-conformance to the style guidelines outlined in this document. Code reviewers may
-request changes as a condition of acceptance of the pull request.
+Contributions to c_sw will be accepted via [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request),
+either from branches in this repository, or from a fork of this repository. Pull
+requests will be reviewed and evaluated based on the technical merit of the
+proposed changes as well as conformance to the style guidelines outlined in this
+document. Code reviewers may request changes as a condition of acceptance of the
+pull request.
 
 ## Branch Management
 
@@ -38,11 +39,11 @@ In addition to the naming conventions, all branches must have a clearly defined,
 singular purpose, described by their name. It is also prefered, but not required,
 that branches correspond to an issue documented in the issue tracking system. (Issues
 can be added after branch creation, if necessary.)  All branches shall result in a
-Pull Request and shall be deleted immediately after that Pull Request is merged.
+pull request and shall be deleted immediately after that pull request is merged.
 
 ## Pull Request Rules and Guidelines
 
-We ask contributor to please be mindful of the following when submitting a Pull
+We ask contributors to please be mindful of the following when submitting a Pull
 Request. The following will help reviewers give meaningful and timely feedback.
 
 * Pull requests will not be accepted for branches that are not up-to-date with
@@ -72,9 +73,8 @@ The following rules apply when modifying existing code, or contributing new code
 
 * Do not use upper case
 
-  Use this
-
   ```
+  ! Use this
   program foo
 
     integer :: foobar
@@ -82,11 +82,8 @@ The following rules apply when modifying existing code, or contributing new code
     integer :: fooBar   ! This is also okay
 
   end program foo
-  ```
 
-  Instead of this
-
-  ```
+  ! Instead of this
   PROGRAM FOO
 
     INTEGER :: FOOBAR
@@ -94,31 +91,35 @@ The following rules apply when modifying existing code, or contributing new code
   END PROGRAM FOO
   ```
 
-* Indent all code blocks inside `program`, `module`, `subroutine`, `function`, `if`, `do`, `while`, etc., two spaces
-
-  Use this
+* Use two spaces to indent all code blocks inside `program`, `module`, `subroutine`, `function`, `if`, `do`, `while`, etc.
 
   ```
+  ! Use this
   program foo
 
     integer :: foobar
 
-  end program
-  ```
+  end program foo
 
-  Instead of this
-
-  ```
+  ! Instead of this
   program foo
 
   integer :: foobar
 
-  end program
+  end program foo
+
+  ! Please do not use this, either
+  program foo
+
+        integer :: foobar
+
+  end program foo
   ```
 
-  Use this
+  Another example
 
   ```
+  ! Use this
   module foo
 
     foo :: integer
@@ -141,11 +142,8 @@ The following rules apply when modifying existing code, or contributing new code
     end subroutine bar
 
   end module foo
-  ```
   
-  Instead of this
-  
-  ```
+  ! Instead of this
   module foo
 
   foo :: integer
@@ -172,53 +170,40 @@ The following rules apply when modifying existing code, or contributing new code
 
 * Use spaces after commas
 
-  Use this
-
   ```
+  ! Use this
   write(*, '(A, I)') "The number is", a(i, j)
-  ```
 
-  Instead of
-
-  ```
+  ! Instead of
   write(*,'(A,I)') "The number is",a(i,j)
   ```
   
 * Use spaces around operators
 
-  Use this
-
   ```
+  ! Use this
   x = a(i, j) * 1.0 - pi / (rho + phi)
-  ```
 
-  Instead of
-
-  ```
+  ! Instead of
   x=a(i,j)*1.0-pi/(rho+phi)
   ```
 
 * Do NOT use spaces before the open parenthesis when calling a function
 
-  Use this
-
   ```
+  ! Use this
   write(*, *) "Foo"
   call bar(x)
-  ```
 
-  Instead of
-
-  ```
+  ! Instead of
   write (*, *) "Foo"
   call bar (x)
   ```
 
 * Align variable and intent declarations
 
-  Use this
-
   ```
+  ! Use this
   subroutine foo(x, y, z)
     integer, intent(   in) :: x
     real,    intent(  out) :: y
@@ -227,11 +212,8 @@ The following rules apply when modifying existing code, or contributing new code
     real, allocatable :: foobar(:,:)
     real              :: baz
     integer           :: zap
-  ```
 
-  Instead of
-
-  ```
+  ! Instead of
   subroutine foo(x, y, z)
     integer, intent(in) :: x
     real, intent(out) :: y
@@ -244,18 +226,14 @@ The following rules apply when modifying existing code, or contributing new code
 
 * Declare subroutine arguments in the same order they appear in the argument list
 
-  Use this
-
   ```
+  ! Use this
   subroutine foo(a, b, c)
     integer :: a
     real    :: b
     logical :: c
-  ```
 
-  Instead of
-
-  ```
+  ! Instead of
   subroutine foo(a, b, c)
     logical :: c
     integer :: a
@@ -264,9 +242,8 @@ The following rules apply when modifying existing code, or contributing new code
 
 * Specify full name in `end` statements
 
-  Use this
-
   ```
+  ! Use this
   program foo
 
   end program foo
@@ -280,11 +257,9 @@ The following rules apply when modifying existing code, or contributing new code
     end subroutine alpha
 
   end module bar
-  ```
 
-  Instead of
 
-  ```
+  ! Instead of
   program foo
 
   end program
