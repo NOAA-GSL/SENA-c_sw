@@ -14,7 +14,7 @@ recommended to view this document on [GitHub](https://github.com/NOAA-GSL/SENA-c
 
 [Pull Request Rules and Guidlines](#pull-request-rules-and-guidelines)
 
-[Fortran Style Guide][(#fortran-style-guide)
+[Fortran Style Guide](#fortran-style-guide)
 
 ## How to Contribute
 
