@@ -155,7 +155,7 @@ The following rules apply when modifying existing code, or contributing new code
     bar = bar + 1
   end subroutine bar
 
-  ! Instead of
+  ! Instead of this
   subroutine foo(bar)
   bar :: integer
   bar = bar + 1
@@ -174,7 +174,7 @@ The following rules apply when modifying existing code, or contributing new code
     end do
   end if
 
-  ! Instead of
+  ! Instead of this
   if (bar > 1) then
   do while (bar < 10)
   write(*, *) "Bar"
@@ -197,7 +197,7 @@ The following rules apply when modifying existing code, or contributing new code
   ! Use this
   write(*, '(A, I)') "The number is", a(i, j)
 
-  ! Instead of
+  ! Instead of this
   write(*,'(A,I)') "The number is",a(i,j)
   ```
   
@@ -207,7 +207,7 @@ The following rules apply when modifying existing code, or contributing new code
   ! Use this
   x = a(i, j) * 1.0 - pi / (rho + phi)
 
-  ! Instead of
+  ! Instead of this
   x=a(i,j)*1.0-pi/(rho+phi)
   ```
 
@@ -218,7 +218,7 @@ The following rules apply when modifying existing code, or contributing new code
   write(*, *) "Foo"
   call bar(x)
 
-  ! Instead of
+  ! Instead of this
   write (*, *) "Foo"
   call bar (x)
   ```
@@ -236,7 +236,7 @@ The following rules apply when modifying existing code, or contributing new code
     real              :: baz
     integer           :: zap
 
-  ! Instead of
+  ! Instead of this
   subroutine foo(x, y, z)
     integer, intent(in) :: x
     real, intent(out) :: y
@@ -256,7 +256,7 @@ The following rules apply when modifying existing code, or contributing new code
     real    :: b
     logical :: c
 
-  ! Instead of
+  ! Instead of this
   subroutine foo(a, b, c)
     logical :: c
     integer :: a
@@ -270,7 +270,7 @@ The following rules apply when modifying existing code, or contributing new code
   program foo
   end program foo
 
-  ! Instead of
+  ! Instead of this
   program foo
   end program
   ```
@@ -284,7 +284,7 @@ The following rules apply when modifying existing code, or contributing new code
     end subroutine bar
   end module foo
 
-  ! Instead of
+  ! Instead of this
   module foo
     subroutine bar
     end subroutine
