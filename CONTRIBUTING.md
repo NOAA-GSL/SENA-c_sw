@@ -320,10 +320,6 @@ collaborators to fix style violations as a condition of approval.
 !****************************************
 subroutine foo()
 
-end subroutine foo
-
 ! Instead of this
 subroutine foo()
-
-end subroutine foo
 ```
