@@ -31,23 +31,28 @@ pull request.
 ## Contributing an Alternative Implementation
 
 Contributors who wish to provide an alternative implementation of `c_sw`
-must do so by issuing a pull request to the `develop` branch from their
-own forks of this repository. Write access to this repository can not be
-granted for external collaborators.
+can do so by issuing a pull request to the `develop` branch from their
+own forks of this repository. Due to NOAA policty, write access to this
+repository can not be granted for external collaborators.
 
-All pull requests for new implementations must include:
+All pull requests for new implementations should include:
 
-* A build system that functions across platforms and (if applicable) across
-multiple compilers.
+* A portable build system that functions across platforms and (if applicable)
+across multiple compilers.
 * Source code that is well written, properly formatted, and documented.
-* A test suite that passes and duplicates the tests that are run in the
-reference implementation. At present, 11 digits of accuracy are expected.
-* A GitHub Actions configuration to automate the new implementation's
-test suite.
+* A test suite that verifies the implementation produces the same results as
+the reference implementation. At present, 11 digits of accuracy are expected.
+* A GitHub Actions continuous integeration configuration to automate the new
+implementation's test suite (we can help with this if needed).
 * A documentation README.md describing the new implementation, including how
 to run and test it.
 
 ## Branch Management
+
+External collaborators are, of course, free to use the branch management
+strategy of their choice in their own forks.  This section applies to branches
+created in this repository by internal collaborators, but exertnal collaborators
+are encouraged to adopt a similar approach.
 
 This repository follows the [GitHub Flow](https://guides.github.com/introduction/flow/)
 branching model with the following modifications borrowed from
@@ -56,6 +61,8 @@ branching model with the following modifications borrowed from
 * All branches that add new features, capabilities, or enhancements must be named:
 `feature/name-of-my-feature`
 * All branches that fix defects must be named: `bugfix/name-of-my-bugfix`
+
+A rule of thumb for choosing a branch type: If it isn't a bugfix, it is a feature.
 
 In addition to the naming conventions, all branches must have a clearly defined,
 singular purpose, described by their name. It is also prefered, but not required,
@@ -68,21 +75,27 @@ pull request and shall be deleted immediately after that pull request is merged.
 We ask contributors to please be mindful of the following when submitting a Pull
 Request. The following will help reviewers give meaningful and timely feedback.
 
+In order to maintain quality standards, the following rules apply:
+
 * Pull requests will not be accepted for branches that are not up-to-date with
 the current `develop` branch.
 * Pull requests will not be accepted unless all tests pass.
-* Pull requests will not be accepted without the addition of tests for any new
-code or feature being proposed.
+* Pull requests that add new capabilities will not be accepted without the inclusion
+of tests that verify those capabilities work properly. (We can help with this if needed)
+
+We also ask contributors to consider the following when proposing changes:
+
 * Provide a good description of the changes you are proposing and reference any
 issues they resolve. Also link to other related or dependent pull requests in
 the description.
-* Pull requests should be as small as possible. Whenever possible, break large
-changes into multiple smaller changes. If your pull request is too big, reviewers
-may ask you to break it into smaller, more digestable, pieces.
+* Pull requests should be as small as possible. Break large changes into multiple
+smaller changes if possible. Put yourself in the reviewers' shoes. If your pull
+request is too big, reviewers may ask you to break it into smaller, more digestable,
+pieces.
 * Group changes that logically contribute to the branch's singular purpose
 together.
 * Do not group unrelated changes together; create separate branches and submit
-pull requests for them separately.
+pull requests for unrelated changes separately.
 
 ## Fortran Style Guide
 
@@ -91,7 +104,9 @@ used to automate conformance of Fortran coding style. The code in this repositor
 should use a consistent style throughout such that it appears it was written by a
 single person.
 
-The following rules apply when modifying existing code, or contributing new code to this repository.
+We ask collaborators to follow these style guidelines when modifying existing code,
+or contributing new code to this repository. Pull request reviewers may ask
+collaborators to fix style violations as a condition of approval.
 
 * Do not use upper case
 
@@ -291,3 +306,24 @@ The following rules apply when modifying existing code, or contributing new code
     end subroutine
   end module
   ```
+
+* Use comment header blocks above subroutines
+
+```
+! Use this
+!****************************************
+!
+! foo
+!
+! Description of what foo does.
+!
+!****************************************
+subroutine foo()
+
+end subroutine foo
+
+! Instead of this
+subroutine foo()
+
+end subroutine foo
+```
