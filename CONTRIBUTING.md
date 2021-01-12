@@ -79,13 +79,15 @@ In order to maintain quality standards, the following rules apply:
 
 * Pull requests will not be accepted for branches that are not up-to-date with
 the current `develop` branch.
-* Pull requests will not be accepted unless all tests pass.
+* Pull requests will not be accepted unless all tests pass.  This include manual
+execution of test suites on local platforms as well as the automated continuous
+integration tests.
 * Pull requests that add new capabilities will not be accepted without the inclusion
 of tests that verify those capabilities work properly. (We can help with this if needed)
 
 We also ask contributors to consider the following when proposing changes:
 
-* Provide a good description of the changes you are proposing and reference any
+* Provide a thorough explanation of the changes you are proposing and reference any
 issues they resolve. Also link to other related or dependent pull requests in
 the description.
 * Pull requests should be as small as possible. Break large changes into multiple
@@ -101,8 +103,8 @@ pull requests for unrelated changes separately.
 
 Unfortunately, there appears not to be a reliable linter for Fortran that can be
 used to automate conformance of Fortran coding style. The code in this repository
-should use a consistent style throughout such that it appears it was written by a
-single person.
+should use a consistent style throughout. The code should appear as if it were 
+written by a single person.
 
 We ask collaborators to follow these style guidelines when modifying existing code,
 or contributing new code to this repository. Pull request reviewers may ask
