@@ -106,6 +106,10 @@ used to automate conformance of Fortran coding style. The code in this repositor
 should use a consistent style throughout. The code should appear as if it were 
 written by a single person.
 
+NOTE: There is a tool, [fprettify](https://github.com/pseewald/fprettify), for automatically
+formatting Fortran code. However, its output does not comply with this style guide
+so we do not recommend its use for contributions to this repository.
+
 We ask collaborators to follow these style guidelines when modifying existing code,
 or contributing new code to this repository. Pull request reviewers may ask
 collaborators to fix style violations as a condition of approval.
