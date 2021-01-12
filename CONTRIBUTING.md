@@ -32,7 +32,7 @@ pull request.
 
 Contributors who wish to provide an alternative implementation of `c_sw`
 can do so by issuing a pull request to the `develop` branch from their
-own forks of this repository. Due to NOAA policty, write access to this
+own forks of this repository. Due to NOAA policy, write access to this
 repository can not be granted for external collaborators.
 
 All pull requests for new implementations should include:
