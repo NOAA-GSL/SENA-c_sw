@@ -74,7 +74,6 @@ module sw_core_mod
   real, allocatable :: divg_d(:,:,:)
 
   ! State parameter constants
-  logical, parameter :: hydrostatic = .false.
   integer, parameter :: grid_type = 0
   logical, parameter :: nested = .false.
   logical, parameter :: dord4 =.true.
@@ -119,7 +118,7 @@ contains
     real, dimension(is-1:ie+2, js-1:je+1) :: fx, fx1, fx2
     real, dimension(is-1:ie+1, js-1:je+2) :: fy, fy1, fy2
     real                                  :: dt4
-    integer                               :: i, j, is2, ie1
+    integer                               :: i, j
     integer                               :: iep1, jep1
 !    integer                               :: ret
 
@@ -172,34 +171,6 @@ contains
       call fill2_4corners(delp, pt, 1, sw_corner, se_corner, ne_corner, nw_corner)
     end if
 
-    if ( hydrostatic ) then
-#ifdef SW_DYNAMICS
-      do j = js-1, jep1
-        do i = is-1, ie+2
-          if ( ut(i, j) > 0. ) then
-            fx1(i, j) = delp(i-1, j)
-          else
-            fx1(i, j) = delp(i, j)
-          endif
-          fx1(i, j) = ut(i, j) * fx1(i, j)
-        enddo
-      enddo
-#else
-      do j = js-1, jep1
-        do i = is-1, ie+2
-          if ( ut(i, j) > 0. ) then
-            fx1(i, j) = delp(i-1, j)
-            fx(i, j) = pt(i-1, j)
-          else
-            fx1(i, j) = delp(i, j)
-            fx(i, j) = pt(i, j)
-          endif
-          fx1(i, j) = ut(i, j) * fx1(i, j)
-          fx(i, j) = fx1(i, j) * fx(i, j)
-        enddo
-      enddo
-#endif
-    else
       if (grid_type < 3) then
         call fill_4corners(w, 1, sw_corner, se_corner, ne_corner, nw_corner)
       end if
@@ -219,39 +190,12 @@ contains
           fx2(i, j) = fx1(i, j) * fx2(i, j)
         enddo
       enddo
-    endif
 
     ! Ydir:
     if (grid_type < 3 .and. .not. nested) then
       call fill2_4corners(delp, pt, 2, sw_corner, se_corner, ne_corner, nw_corner)
     end if
-    if ( hydrostatic ) then
-      do j = js-1, jep1+1
-        do i = is-1, iep1
-          if ( vt(i, j) > 0. ) then
-            fy1(i, j) = delp(i, j-1)
-            fy(i, j) = pt(i, j-1)
-          else
-            fy1(i, j) = delp(i, j)
-            fy(i, j) = pt(i, j)
-          endif
-          fy1(i, j) = vt(i, j) * fy1(i, j)
-          fy(i, j) = fy1(i, j) * fy(i, j)
-        enddo
-      enddo
-      do j = js-1, jep1
-        do i = is-1, iep1
-          delpc(i, j) = delp(i, j) + (fx1(i, j) - fx1(i+1, j) + fy1(i, j) - &
-                        fy1(i, j+1)) * rarea(i,j)
-#ifdef SW_DYNAMICS
-          ptc(i, j) = pt(i, j)
-#else
-          ptc(i, j) = (pt(i, j) * delp(i, j) + (fx(i, j) - fx(i+1, j) + &
-                       fy(i, j) - fy(i, j+1)) * rarea(i, j)) / delpc(i, j)
-#endif
-        enddo
-      enddo
-    else
+
       if (grid_type < 3) then
         call fill_4corners(w, 2, sw_corner, se_corner, ne_corner, nw_corner)
       end if
@@ -281,7 +225,6 @@ contains
                       fy2(i, j) - fy2(i, j+1)) * rarea(i, j)) / delpc(i, j)
         enddo
       enddo
-    endif
 
     !------------
     ! Compute KE:
@@ -1052,7 +995,6 @@ contains
     real, intent(in) :: dxa(4)
 
     real    :: u0L, u0R
-    integer :: ret
 
     u0L = 0.5 * ((2. * dxa(2) + dxa(1)) * ua(2) - dxa(2) * ua(1)) / (dxa(1) + dxa(2))
     u0R = 0.5 * ((2. * dxa(3) + dxa(4)) * ua(3) - dxa(3) * ua(4)) / (dxa(3) + dxa(4))
