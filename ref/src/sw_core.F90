@@ -75,7 +75,6 @@ module sw_core_mod
 
   ! State parameter constants
   integer, parameter :: grid_type = 0
-  logical, parameter :: nested = .false.
   logical, parameter :: dord4 =.true.
 
 contains
@@ -130,17 +129,9 @@ contains
                     dxa, dya, u, v, ua, va, uc, vc, ut, vt)
 
     if ( nord > 0 ) then
-      if (nested) then
-!        call divergence_corner_nest(rarea_c, sin_sg, cos_sg,                  &
-!                                    cosa_u, cosa_v, sina_u, sina_v, dxc, dyc, &
-!                                    u, v, ua, va, divg_d)
-        write(*, *) "ERROR: nested = .true. is not supported"
-        stop 1
-      else
-        call divergence_corner(sw_corner, se_corner, ne_corner, nw_corner, &
-                               rarea_c, sin_sg, cos_sg, cosa_u, cosa_v,    &
-                               sina_u, sina_v, dxc, dyc, u, v, ua, va, divg_d)
-      endif
+      call divergence_corner(sw_corner, se_corner, ne_corner, nw_corner, &
+                             rarea_c, sin_sg, cos_sg, cosa_u, cosa_v,    &
+                             sina_u, sina_v, dxc, dyc, u, v, ua, va, divg_d)
     endif
 
     ! ret = gptlstart('c_sw')
@@ -167,11 +158,8 @@ contains
     ! Transport delp:
     !----------------
     ! Xdir:
-    if (grid_type < 3 .and. .not. nested) then
-      call fill2_4corners(delp, pt, 1, sw_corner, se_corner, ne_corner, nw_corner)
-    end if
-
     if (grid_type < 3) then
+      call fill2_4corners(delp, pt, 1, sw_corner, se_corner, ne_corner, nw_corner)
       call fill_4corners(w, 1, sw_corner, se_corner, ne_corner, nw_corner)
     end if
     do j = js-1, je+1
@@ -192,11 +180,8 @@ contains
     enddo
 
     ! Ydir:
-    if (grid_type < 3 .and. .not. nested) then
-      call fill2_4corners(delp, pt, 2, sw_corner, se_corner, ne_corner, nw_corner)
-    end if
-
     if (grid_type < 3) then
+      call fill2_4corners(delp, pt, 2, sw_corner, se_corner, ne_corner, nw_corner)
       call fill_4corners(w, 2, sw_corner, se_corner, ne_corner, nw_corner)
     end if
     do j = js-1, je+2
@@ -235,7 +220,7 @@ contains
     ! covariant wind, computed through u = uc*sina + v*cosa.
     !
     ! Use the alpha for the cell KE is being computed in.
-    if (nested .or. grid_type >=3 ) then
+    if (grid_type >=3 ) then
       do j = js-1, jep1
         do i = is-1, iep1
           if ( ua(i, j) > 0. ) then
@@ -350,7 +335,7 @@ contains
     ! but we then must multiply by sin_sg to get the proper flux.
     ! These cancel, leaving us with fy1 = dt2*v at the edges.
     ! (For the same reason we only divide by sin instead of sin**2 in the interior)
-    if ( nested .or. grid_type >= 3 ) then
+    if ( grid_type >= 3 ) then
       do j = js, je
         do i = is, iep1
           fy1(i, j) = dt2 * (v(i, j) - uc(i, j) * cosa_u(i, j)) / sina_u(i, j)
@@ -456,13 +441,8 @@ contains
 
     ! ret = gptlstart('divergence_corner')
 
-    if (nested) then
-      is2 = is
-      ie1 = ie+1
-    else
-      is2 = max(2, is)
-      ie1 = min(npx-1, ie+1)
-    end if
+    is2 = max(2, is)
+    ie1 = min(npx-1, ie+1)
 
     if ( grid_type == 4 ) then
       do j = js-1, je+2
@@ -483,7 +463,7 @@ contains
     else
 #ifdef USE_UPWIND
       do j = js, je+1
-        if ( (j == 1 .or. j == npy) .and. .not. nested ) then
+        if (j == 1 .or. j == npy) then
           do i = is-1, ie+1
             if ( va(i, j) + va(i, j-1) > 0. ) then
               uf(i, j) = u(i, j) * dyc(i, j) * sin_sg(i, j-1, 4)
@@ -504,14 +484,14 @@ contains
           vf(i, j) = (v(i, j) - 0.5 * (ua(i-1, j) + ua(i, j)) * cosa_u(i, j))  &
                      * dxc(i, j) * sina_u(i, j)
         enddo
-        if ( is == 1 .and. .not. nested ) then
+        if ( is == 1 ) then
           if ( ua(1,j) + ua(0,j) > 0. ) then
             vf(1, j) = v(1, j) * dxc(1, j) * sin_sg(0, j, 3)
           else
             vf(1, j) = v(1, j) * dxc(1, j) * sin_sg(1, j, 1)
           end if
         end if
-        if ( (ie+1) == npx .and. .not. nested ) then
+        if ( (ie+1) == npx ) then
           if ( ua(npx-1, j) + ua(npx, j) > 0. ) then
             vf(npx, j) = v(npx, j) * dxc(npx, j) * sin_sg(npx-1, j, 3)
           else
@@ -618,7 +598,7 @@ contains
       id = 0
     endif
 
-    if ( grid_type < 3 .and. .not. nested ) then
+    if ( grid_type < 3 ) then
       npt = 4
     else
       npt = -2
@@ -628,109 +608,75 @@ contains
     utmp = big_number
     vtmp = big_number
 
-    if ( nested ) then
-      do j = jsd+1, jed-1
-        do i = isd, ied
-          utmp(i, j) = a2 * (u(i, j-1) + u(i, j+2)) + a1 * (u(i, j) + u(i, j+1))
-        enddo
-      enddo
-      do i = isd, ied
-        j = jsd
-        utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
-        j = jed
-        utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
-      end do
+    !----------
+    ! Interior:
+    !----------
 
-      do j = jsd, jed
-        do i = isd+1, ied-1
-          vtmp(i, j) = a2 * (v(i-1, j) + v(i+2, j)) + a1 * (v(i, j) + v(i+1, j))
-        enddo
-        i = isd
-        vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
-        i = ied
-        vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
+    do j = max(npt, js-1), min(npy-npt, je+1)
+      do i = max(npt, isd), min(npx-npt, ied)
+        utmp(i, j) = a2 * (u(i, j-1) + u(i, j+2)) + a1 * (u(i, j) + u(i, j+1))
       enddo
-
-      do j = jsd, jed
-        do i = isd, ied
-          ua(i, j) = (utmp(i, j) - vtmp(i, j) * cosa_s(i, j)) * rsin2(i, j)
-          va(i, j) = (vtmp(i, j) - utmp(i, j) * cosa_s(i, j)) * rsin2(i, j)
-        enddo
+    enddo
+    do j = max(npt, jsd), min(npy-npt, jed)
+      do i = max(npt, is-1), min(npx-npt, ie+1)
+        vtmp(i, j) = a2 * (v(i-1, j) + v(i+2, j)) + a1 * (v(i, j) + v(i+1, j))
       enddo
-
-    else
-
-      !----------
-      ! Interior:
-      !----------
-
-      do j = max(npt, js-1), min(npy-npt, je+1)
-        do i = max(npt, isd), min(npx-npt, ied)
-          utmp(i, j) = a2 * (u(i, j-1) + u(i, j+2)) + a1 * (u(i, j) + u(i, j+1))
-        enddo
-      enddo
-      do j = max(npt, jsd), min(npy-npt, jed)
-        do i = max(npt, is-1), min(npx-npt, ie+1)
-          vtmp(i, j) = a2 * (v(i-1, j) + v(i+2, j)) + a1 * (v(i, j) + v(i+1, j))
-        enddo
-      enddo
+    enddo
 
 #ifdef EDGE_TEST
-      call timing_on('COMM_TOTAL')
-      call mpp_update_domains(utmp, vtmp, domain)
-      call timing_off('COMM_TOTAL')
+    call timing_on('COMM_TOTAL')
+    call mpp_update_domains(utmp, vtmp, domain)
+    call timing_off('COMM_TOTAL')
 #else
-      !----------
-      ! edges:
-      !----------
-      if (grid_type < 3) then
+    !----------
+    ! edges:
+    !----------
+    if (grid_type < 3) then
 
-        if ( js == 1 .or. jsd < npt) then
-          do j = jsd, npt-1
-            do i = isd, ied
-              utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
-              vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
-            enddo
+      if ( js == 1 .or. jsd < npt) then
+        do j = jsd, npt-1
+          do i = isd, ied
+            utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
+            vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
           enddo
-        endif
-
-        if ( (je + 1) == npy .or. jed >= (npy - npt) ) then
-          do j = npy-npt+1, jed
-            do i = isd, ied
-              utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
-              vtmp(i, j) = 0.5 * (v(i, j) + v(i+1,j) )
-            enddo
-          enddo
-        endif
-
-        if ( is == 1 .or. isd < npt ) then
-          do j = max(npt, jsd), min(npy-npt, jed)
-            do i = isd, npt-1
-              utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
-              vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
-            enddo
-          enddo
-        endif
-
-        if ( (ie+1) == npx .or. ied >= (npx-npt) ) then
-          do j = max(npt, jsd), min(npy-npt, jed)
-            do i = npx-npt+1, ied
-              utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
-              vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
-            enddo
-          enddo
-        endif
-
-      endif
-#endif
-      do j = js-1-id, je+1+id
-        do i = is-1-id, ie+1+id
-          ua(i, j) = (utmp(i, j) - vtmp(i, j) * cosa_s(i, j)) * rsin2(i, j)
-          va(i, j) = (vtmp(i, j) - utmp(i, j) * cosa_s(i, j)) * rsin2(i, j)
         enddo
-      enddo
+      endif
 
-    end if
+      if ( (je + 1) == npy .or. jed >= (npy - npt) ) then
+        do j = npy-npt+1, jed
+          do i = isd, ied
+            utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
+            vtmp(i, j) = 0.5 * (v(i, j) + v(i+1,j) )
+          enddo
+        enddo
+      endif
+
+      if ( is == 1 .or. isd < npt ) then
+        do j = max(npt, jsd), min(npy-npt, jed)
+          do i = isd, npt-1
+            utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
+            vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
+          enddo
+        enddo
+      endif
+
+      if ( (ie+1) == npx .or. ied >= (npx-npt) ) then
+        do j = max(npt, jsd), min(npy-npt, jed)
+          do i = npx-npt+1, ied
+            utmp(i, j) = 0.5 * (u(i, j) + u(i, j+1))
+            vtmp(i, j) = 0.5 * (v(i, j) + v(i+1, j))
+          enddo
+        enddo
+      endif
+
+    endif
+#endif
+    do j = js-1-id, je+1+id
+      do i = is-1-id, ie+1+id
+        ua(i, j) = (utmp(i, j) - vtmp(i, j) * cosa_s(i, j)) * rsin2(i, j)
+        va(i, j) = (vtmp(i, j) - utmp(i, j) * cosa_s(i, j)) * rsin2(i, j)
+      enddo
+    enddo
 
     ! A -> C
     !--------------
@@ -758,7 +704,7 @@ contains
       enddo
     endif
 
-    if ( grid_type < 3 .and. .not. nested ) then
+    if ( grid_type < 3 ) then
       ifirst = max(3,     is-1)
       ilast  = min(npx-2, ie+2)
     else
@@ -797,7 +743,7 @@ contains
       endif
 #endif
 
-      if ( is == 1 .and. .not. nested  ) then
+      if ( is == 1 ) then
         do j = js-1, je+1
           uc(0, j) = c1 * utmp(-2, j) + c2 * utmp(-1, j) + c3 * utmp(0, j)
 #ifndef TEST_NEW
@@ -828,7 +774,7 @@ contains
         enddo
       endif
 
-      if ( (ie+1) == npx  .and. .not. nested ) then
+      if ( (ie+1) == npx ) then
         do j = js-1, je+1
           uc(npx-1, j) = c1 * utmp(npx-3, j) + c2 * utmp(npx-2, j) + c3 * utmp(npx-1, j)
 #ifndef TEST_NEW
@@ -905,7 +851,7 @@ contains
     if ( grid_type < 3 ) then
 
       do j = js-1, je+2
-        if ( j == 1 .and. .not. nested  ) then
+        if ( j == 1 ) then
           do i = is-1, ie+1
 #ifndef TEST_NEW
             ! vt(i, j) = 0.25 * (-va(i, j-2) + 3. * (va(i, j-1) + va(i, j)) - va(i, j+1))
@@ -929,17 +875,17 @@ contains
             ! 3-pt extrapolation -----------------------------------------
 #endif
           enddo
-        elseif ( j == 0 .or. j == (npy-1) .and. .not. nested  ) then
+        elseif ( j == 0 .or. j == (npy-1) ) then
           do i = is-1, ie+1
             vc(i, j) = c1 * vtmp(i, j-2) + c2 * vtmp(i, j-1) + c3 * vtmp(i, j)
             vt(i, j) = (vc(i, j) - u(i, j) * cosa_v(i, j)) * rsin_v(i, j)
           enddo
-        elseif ( j == 2 .or. j == (npy+1)  .and. .not. nested ) then
+        elseif ( j == 2 .or. j == (npy+1) ) then
           do i = is-1, ie+1
             vc(i, j) = c1 * vtmp(i, j+1) + c2 * vtmp(i, j) + c3 * vtmp(i, j-1)
             vt(i, j) = (vc(i, j) - u(i, j) * cosa_v(i, j)) * rsin_v(i, j)
           enddo
-        elseif ( j == npy .and. .not. nested  ) then
+        elseif ( j == npy ) then
           do i = is-1, ie+1
 #ifndef TEST_NEW
             vt(i, j) = 0.25 * (-va(i, j-2) + 3. * (va(i, j-1) + va(i, j)) - va(i, j+1))
