@@ -126,8 +126,8 @@ contains
 
     if ( nord > 0 ) then
       call divergence_corner(sw_corner, se_corner, ne_corner, nw_corner, &
-                             rarea_c, sin_sg, cos_sg, cosa_u, cosa_v,    &
-                             sina_u, sina_v, dxc, dyc, u, v, ua, va, divg_d)
+                             rarea_c, sin_sg, cos_sg,                    &
+                             dxc, dyc, u, v, ua, va, divg_d)
     endif
 
     ! ret = gptlstart('c_sw')
@@ -365,14 +365,12 @@ contains
   ! divergence_corner
   !------------------------------------------------------------------
   subroutine divergence_corner(sw_corner, se_corner, ne_corner, nw_corner, &
-                               rarea_c, sin_sg, cos_sg, cosa_u, cosa_v,    &
-                               sina_u, sina_v, dxc, dyc, u, v, ua, va, divg_d)
+                               rarea_c, sin_sg, cos_sg,                    &
+                               dxc, dyc, u, v, ua, va, divg_d)
 
     logical, intent( in) :: sw_corner, se_corner, ne_corner, nw_corner
     real,    intent( in), dimension(isd:ied+1, jsd:jed+1  ) :: rarea_c
     real,    intent( in), dimension(isd:ied,   jsd:jed,  9) :: sin_sg, cos_sg
-    real,    intent( in), dimension(isd:ied,   jsd:jed+1  ) :: sina_v, cosa_v
-    real,    intent( in), dimension(isd:ied+1, jsd:jed    ) :: sina_u, cosa_u
     real,    intent( in), dimension(isd:ied+1, jsd:jed    ) :: dxc
     real,    intent( in), dimension(isd:ied,   jsd:jed+1  ) :: dyc
     real,    intent( in), dimension(isd:ied,   jsd:jed+1  ) :: u
@@ -392,45 +390,6 @@ contains
     is2 = max(2, is)
     ie1 = min(npx-1, ie+1)
 
-#ifdef USE_UPWIND
-    do j = js, je+1
-      if (j == 1 .or. j == npy) then
-        do i = is-1, ie+1
-          if ( va(i, j) + va(i, j-1) > 0. ) then
-            uf(i, j) = u(i, j) * dyc(i, j) * sin_sg(i, j-1, 4)
-          else
-            uf(i, j) = u(i, j) * dyc(i, j) * sin_sg(i, j, 2)
-          end if
-        enddo
-      else
-        do i = is-1, ie+1
-          uf(i, j) = (u(i, j) - 0.5 * (va(i, j-1) + va(i, j)) * cosa_v(i, j)) &
-                     * dyc(i, j) * sina_v(i, j)
-        enddo
-      endif
-    enddo
-
-    do j = js-1, je+1
-      do i = is2, ie1
-        vf(i, j) = (v(i, j) - 0.5 * (ua(i-1, j) + ua(i, j)) * cosa_u(i, j))  &
-                   * dxc(i, j) * sina_u(i, j)
-      enddo
-      if ( is == 1 ) then
-        if ( ua(1,j) + ua(0,j) > 0. ) then
-          vf(1, j) = v(1, j) * dxc(1, j) * sin_sg(0, j, 3)
-        else
-          vf(1, j) = v(1, j) * dxc(1, j) * sin_sg(1, j, 1)
-        end if
-      end if
-      if ( (ie+1) == npx ) then
-        if ( ua(npx-1, j) + ua(npx, j) > 0. ) then
-          vf(npx, j) = v(npx, j) * dxc(npx, j) * sin_sg(npx-1, j, 3)
-        else
-          vf(npx, j) = v(npx, j) * dxc(npx, j) * sin_sg(npx, j, 1)
-        end if
-      end if
-    enddo
-#else
     !     9---4---8
     !     |       |
     !     1   5   3
@@ -465,7 +424,6 @@ contains
                      sin_sg(npx, j, 1))
       endif
     enddo
-#endif
 
     do j = js, je+1
       do i = is, ie+1
@@ -541,11 +499,6 @@ contains
       enddo
     enddo
 
-#ifdef EDGE_TEST
-    call timing_on('COMM_TOTAL')
-    call mpp_update_domains(utmp, vtmp, domain)
-    call timing_off('COMM_TOTAL')
-#else
     !----------
     ! edges:
     !----------
@@ -585,7 +538,6 @@ contains
       enddo
     endif
 
-#endif
     do j = js-2, je+2
       do i = is-2, ie+2
         ua(i, j) = (utmp(i, j) - vtmp(i, j) * cosa_s(i, j)) * rsin2(i, j)
@@ -632,7 +584,6 @@ contains
       enddo
     enddo
 
-#ifndef TEST_NEW
     ! Xdir:
     if ( sw_corner ) then
       ua(-1, 0) = -va(0, 2)
@@ -650,31 +601,17 @@ contains
       ua(-1, npy) = va(0, npy-2)
       ua( 0, npy) = va(0, npy-1)
     endif
-#endif
 
     if ( is == 1 ) then
       do j = js-1, je+1
         uc(0, j) = c1 * utmp(-2, j) + c2 * utmp(-1, j) + c3 * utmp(0, j)
-#ifndef TEST_NEW
         ut(1, j) = edge_interpolate4(ua(-1:2, j), dxa(-1:2, j))
         !Want to use the UPSTREAM value
-#ifdef UPSTREAM_FIXED
-        if (ut(1, j) > 0.) then
-#else
         if (ut(1, j) < 0.) then
-#endif
           uc(1, j) = ut(1, j) * sin_sg(0, j, 3)
         else
           uc(1, j) = ut(1, j) * sin_sg(1, j, 1)
         end if
-#else
-        ! 3-pt extrapolation: grid symmetry assumed --------------------------------
-        uc(1, j) = (t14 * (utmp(0,  j) + utmp(1, j))    &
-                  + t12 * (utmp(-1, j) + utmp(2, j))    &
-                  + t15 * (utmp(-2, j) + utmp(3, j))) * rsin_u(1, j)
-        ut(1, j) = uc(1, j) * rsin_u(1, j)
-        ! 3-pt extrapolation: grid symmetry assumed --------------------------------
-#endif
         uc(2, j) = c1 * utmp(3, j) + c2 * utmp(2, j) + c3 * utmp(1, j)
         ut(0, j) = (uc(0, j) - v(0, j) * cosa_u(0, j)) * rsin_u(0, j)
         ut(2, j) = (uc(2, j) - v(2, j) * cosa_u(2, j)) * rsin_u(2, j)
@@ -683,27 +620,14 @@ contains
       if ( (ie+1) == npx ) then
         do j = js-1, je+1
           uc(npx-1, j) = c1 * utmp(npx-3, j) + c2 * utmp(npx-2, j) + c3 * utmp(npx-1, j)
-#ifndef TEST_NEW
           i = npx
           ut(i, j) = 0.25 * (-ua(i-2, j) + 3. * (ua(i-1, j) + ua(i, j)) - ua(i+1, j))
           ut(i, j) = edge_interpolate4(ua(i-2:i+1, j), dxa(i-2:i+1, j))
-#ifdef UPSTREAM_FIXED
-          if ( ut(i,j) > 0. ) then
-#else
           if ( ut(i,j) < 0. ) then
-#endif
             uc(i, j) = ut(i, j) * sin_sg(i-1, j, 3)
           else
             uc(i, j) = ut(i, j) * sin_sg(i, j, 1)
           end if
-#else
-          ! 3-pt extrapolation --------------------------------------------------------
-          uc(npx, j) = (t14 * (utmp(npx-1, j) + utmp(npx,   j)) +  &
-                        t12 * (utmp(npx-2, j) + utmp(npx+1, j)) +  &
-                        t15 * (utmp(npx-3, j) + utmp(npx+2, j))) * rsin_u(npx, j)
-          ut(npx, j) =  uc(npx, j) * rsin_u(npx, j)
-          ! 3-pt extrapolation --------------------------------------------------------
-#endif
           uc(npx+1, j) = c3 * utmp(npx, j) + c2 * utmp(npx+1, j) + c1 * utmp(npx+2, j)
           ut(npx-1, j) = (uc(npx-1, j) - v(npx-1, j) * cosa_u(npx-1, j)) * rsin_u(npx-1, j)
           ut(npx+1, j) = (uc(npx+1, j) - v(npx+1, j) * cosa_u(npx+1, j)) * rsin_u(npx+1, j)
@@ -735,7 +659,6 @@ contains
         vtmp(npx, npy+j) = -utmp(ie-j, npy)
       enddo
     endif
-#ifndef TEST_NEW
     if ( sw_corner ) then
       va(0, -1) = -ua(2, 0)
       va(0,  0) = -ua(1, 0)
@@ -752,30 +675,16 @@ contains
       va(0, npy)   = ua(1, npy)
       va(0, npy+1) = ua(2, npy)
     endif
-#endif
 
     do j = js-1, je+2
       if ( j == 1 ) then
         do i = is-1, ie+1
-#ifndef TEST_NEW
           vt(i, j) = edge_interpolate4(va(i, -1:2), dya(i, -1:2))
-#ifdef UPSTREAM_FIXED
-          if ( vt(i, j) > 0. ) then
-#else
           if ( vt(i, j) < 0. ) then
-#endif
             vc(i, j) = vt(i, j) * sin_sg(i, j-1, 4)
           else
             vc(i, j) = vt(i, j) * sin_sg(i, j, 2)
           end if
-#else
-          ! 3-pt extrapolation -----------------------------------------
-          vc(i, 1) = (t14 * (vtmp(i,  0) + vtmp(i, 1))    &
-                    + t12 * (vtmp(i, -1) + vtmp(i, 2))    &
-                    + t15 * (vtmp(i, -2) + vtmp(i, 3))) * rsin_v(i, 1)
-          vt(i,1) = vc(i,1) * rsin_v(i,1)
-          ! 3-pt extrapolation -----------------------------------------
-#endif
         enddo
       elseif ( j == 0 .or. j == (npy-1) ) then
         do i = is-1, ie+1
@@ -789,26 +698,13 @@ contains
         enddo
       elseif ( j == npy ) then
         do i = is-1, ie+1
-#ifndef TEST_NEW
           vt(i, j) = 0.25 * (-va(i, j-2) + 3. * (va(i, j-1) + va(i, j)) - va(i, j+1))
           vt(i, j) = edge_interpolate4(va(i, j-2:j+1), dya(i, j-2:j+1))
-#ifdef UPSTREAM_FIXED
-          if ( vt(i, j) > 0. ) then
-#else
           if ( vt(i, j) < 0. ) then
-#endif
             vc(i, j) = vt(i, j) * sin_sg(i, j-1, 4)
           else
             vc(i, j) = vt(i, j) * sin_sg(i, j, 2)
           end if
-#else
-          ! 3-pt extrapolation --------------------------------------------------------
-          vc(i, npy) = (t14 * (vtmp(i, npy-1) + vtmp(i, npy))    &
-                      + t12 * (vtmp(i, npy-2) + vtmp(i, npy+1))  &
-                      + t15 * (vtmp(i, npy-3) + vtmp(i, npy+2))) * rsin_v(i, npy)
-          vt(i, npy) = vc(i, npy) * rsin_v(i, npy)
-          ! 3-pt extrapolation -----------------------------------------
-#endif
         enddo
       else
         ! 4th order interpolation for interior points:
