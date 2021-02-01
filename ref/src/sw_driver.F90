@@ -31,7 +31,7 @@ program sw_driver
 
   ! Initialize GPTL if enabled
 #ifdef ENABLE_GPTL
-  call GPTLinitialize(ret)
+  ret = GPTLinitialize()
 #endif
 
   ! Get the number of arguments
@@ -96,5 +96,11 @@ program sw_driver
 
   ! Deallocate the state variables
   call deallocate_state()
+
+  ! Turn off GPTL if enabled
+#ifdef ENABLE_GPTL
+  ret = gptlpr(0)
+  ret = gptlfinalize()
+#endif
 
 end program sw_driver
