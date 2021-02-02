@@ -36,7 +36,21 @@ jobs:
         run: |
           nc-config --version
           nf-config --version
-      
+
+      # Install GPTL
+      - name: Install GPTL
+        run: |
+          cd /tmp
+          export CC=gcc-10
+          export FC=gfortran-10
+          wget https://github.com/jmrosinski/GPTL/releases/download/v8.0.3/gptl-8.0.3.tar.gz
+          tar -xzvf gptl-8.0.3.tar.gz
+          cd gptl-8.0.3
+          ./configure
+          make
+          make check
+          sudo make install
+
       # Test debug mode 
       - name: Test c_sw Debug 
         run: |
@@ -62,6 +76,20 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=release ..
           make
           ctest       
+
+      # Test GPTL support
+      - name: Build c_sw with GPTL profiling
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc-10
+          export FC=gfortran-10
+          cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
+          make
+          ctest
+          grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
        
   ubuntu_build:
     name: Ubuntu Build
@@ -141,7 +169,7 @@ jobs:
           cd build
           export CC=gcc
           export FC=gfortran
-          cmake -DCMAKE_BUILD_TYPE=release -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
+          cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
           make
           ctest
           grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
