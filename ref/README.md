@@ -25,7 +25,7 @@ The following packages are required for building and running this kernel:
 ## Optional Dependencies
 The following packages are optional for building and running this kernel:
 
-* [GPTL (General Purpose Timing Library)](https://github.com/jmrosinski/GPTL)
+* [GPTL](https://github.com/jmrosinski/GPTL) (General Purpose Timing Library)
 
 ## Prerequisites
 This code requires git-lfs. Before cloning the repository, verify that git-lfs is installed, by issuing the following command. This only needs to be done once per user per machine.
