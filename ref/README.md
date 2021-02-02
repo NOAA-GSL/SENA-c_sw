@@ -171,14 +171,18 @@ $ ctest -VV -R regression_12x24
 
 ## Build and test script
 
-For convenience, a build script is provided that builds the code and runs the test suite.
+For convenience, a build script is provided that builds the code and runs the test suite. An
+optional third argument (as shown below) specifies the type of GPTL support desired.  GPTL
+support is off by default.
 
 **(NOTE: This script is written for machines that use modules and it may need to be modified,
 depending on how modules are set up on your system)**
 
 ```bash
-$ ./build.sh <gcc | intel> <debug | release>
+$ ./build.sh <gcc | intel> <debug | release> [off | manual | auto]
 ```
+
+
 
 ## Installation and running
 
