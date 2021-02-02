@@ -24,12 +24,11 @@ program sw_driver
   ! Input configuration variables
   character(len=64) :: namelist_file = "test_input/c_sw_12x24.nl"
   character(len=64) :: input_file, output_file
-  integer           :: do_profile=0
   integer           :: nl_unit
 
   ! Input namelists
   namelist /io/       input_file, output_file
-  namelist /debug/    do_profile
+  namelist /debug/    do_profile                ! Defined in sw_core_mod
 
   ! Get the number of arguments
   narg = command_argument_count()
@@ -74,6 +73,12 @@ program sw_driver
   ! Get the start time
   call system_clock(count_start, count_rate)
 
+#ifdef ENABLE_GPTL
+  if (do_profile == 1) then
+     ret = gptlstart('kernel')
+  end if
+#endif
+
   ! Run the kernel
   !$OMP parallel do schedule(runtime)
   do k=1,npz
@@ -87,6 +92,12 @@ program sw_driver
                ua(isd,jsd,k), va(isd,jsd,k), wc(isd,jsd,k),          &
                ut(isd,jsd,k), vt(isd,jsd,k), divg_d(isd,jsd,k), dt2)
   enddo
+
+#ifdef ENABLE_GPTL
+  if (do_profile == 1) then
+     ret = gptlstop('kernel')
+  end if
+#endif
 
   ! Get the stop time
   call system_clock(count_end, count_rate)
