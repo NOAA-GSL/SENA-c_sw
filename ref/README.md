@@ -22,6 +22,11 @@ The following packages are required for building and running this kernel:
 * git
 * [git-lfs](https://git-lfs.github.com/)
 
+## Optional Dependencies
+The following packages are optional for building and running this kernel:
+
+* [GPTL](https://github.com/jmrosinski/GPTL)
+
 ## Prerequisites
 This code requires git-lfs. Before cloning the repository, verify that git-lfs is installed, by issuing the following command. This only needs to be done once per user per machine.
 
@@ -78,6 +83,27 @@ $ make VERBOSE=1
 On many systems, the above will suffice. However, some systems will require you to help cmake
 find dependencies, particularly if software depencencies are not installed in standard locations.
 See below for more information.
+
+### Building with GPTL profiling support
+
+If GPTL is installed and loaded onto system paths, this kernel may be built with support for
+GPTL profiling. There are two options.
+
+The first option enables you to	insert your own	custom GPTL timers into the code to suite your
+own purposes.
+
+To enable GPTL, add `-DENABLE_GPTL=1` to the `cmake` command.  For example:
+```bash
+$ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 ..
+```
+
+The second option enables autoprofiling, which will give you timings for all subroutine calls
+in the kernel.
+
+To enable GPTL autoprofiling, also add `-DENABLE_AUTOPROFILING=1` to the `cmake` command.  For example:
+```bash
+$ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..`
+```
 
 ### Machines that use modules to manage software
 
