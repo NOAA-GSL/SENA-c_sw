@@ -94,6 +94,18 @@ jobs:
           nc-config --version
           nf-config --version
 
+      # Install GPTL
+      - name: Install GPTL
+        run: |
+          cd /tmp
+          wget https://github.com/jmrosinski/GPTL/releases/download/v8.0.3/gptl-8.0.3.tar.gz
+          tar -xzvf gptl-8.0.3.tar.gz
+          cd gptl-8.0.3
+          ./configure
+          make
+          make check
+          sudo make install
+
       # Test debug mode
       - name: Build c_sw debug
         run: |
@@ -117,5 +129,18 @@ jobs:
           export CC=gcc
           export FC=gfortran
           cmake -DCMAKE_BUILD_TYPE=release ..
+          make
+          ctest
+
+      # Test GPTL support
+      - name: Build c_sw with GPTL profiling
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc
+          export FC=gfortran
+          cmake -DCMAKE_BUILD_TYPE=release -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
           make
           ctest
