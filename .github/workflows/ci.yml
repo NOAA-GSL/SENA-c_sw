@@ -144,3 +144,4 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=release -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
           make
           ctest
+          grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
