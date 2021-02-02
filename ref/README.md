@@ -25,7 +25,7 @@ The following packages are required for building and running this kernel:
 ## Optional Dependencies
 The following packages are optional for building and running this kernel:
 
-* [GPTL](https://github.com/jmrosinski/GPTL)
+* [GPTL (General Purpose Timing Library)](https://github.com/jmrosinski/GPTL)
 
 ## Prerequisites
 This code requires git-lfs. Before cloning the repository, verify that git-lfs is installed, by issuing the following command. This only needs to be done once per user per machine.
@@ -86,24 +86,30 @@ See below for more information.
 
 ### Building with GPTL profiling support
 
+[GPTL](https://github.com/jmrosinski/GPTL) is a timing library that can be used to generate timing
+statistics for codes during execution. See the [GPTL documentation](https://jmrosinski.github.io/GPTL/)
+for more information and examples.
+
 If GPTL is installed and loaded onto system paths, this kernel may be built with support for
-GPTL profiling. There are two options.
+profiling using GPTL. There are two options: autoprofiling and manual insertion of custom GPTL timers.
 
-The first option enables GPTL and allows you to	insert your own	custom GPTL timers into the code
-to suit your own purposes.
+Autoprofiling will give you timings for all subroutine calls in the kernel. To enable GPTL
+autoprofiling add `-DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1` to the
+`cmake` command. For example:
 
-To enable GPTL, add `-DENABLE_GPTL=1` to the `cmake` command.  For example:
+```bash
+$ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
+```
+
+Manual insertion of custom timers allows you to time the execution of specific blocks of code.
+To enable GPTL so you can add your own custom timers, add `-DENABLE_GPTL=1` to the `cmake`
+command.  For example:
+
 ```bash
 $ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 ..
 ```
 
-The second option enables GPTL autoprofiling, which will give you timings for all subroutine calls
-in the kernel.
-
-To enable GPTL autoprofiling, also add `-DENABLE_AUTOPROFILING=1` to the `cmake` command.  For example:
-```bash
-$ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
-```
+GPTL timing information is written to `timing.*` files in the directory where the code executes.
 
 ### Machines that use modules to manage software
 
