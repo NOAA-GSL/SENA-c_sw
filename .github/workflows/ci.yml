@@ -168,6 +168,9 @@ jobs:
       - name: Build c_sw with GPTL profiling
         run: |
           cd ref
+          ls -l
+          ls -l test
+          ls -l test/test_input
           sed -i 's/do_profile=0/do_profile=1/' test/test_input/c_sw_12x24.nl
           sed -i 's/do_profile=0/do_profile=1/' test/test_input/c_sw_24x24.nl
           sed -i 's/do_profile=0/do_profile=1/' test/test_input/c_sw_24x48.nl
