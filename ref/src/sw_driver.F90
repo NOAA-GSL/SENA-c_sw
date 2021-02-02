@@ -24,15 +24,12 @@ program sw_driver
   ! Input configuration variables
   character(len=64) :: namelist_file = "test_input/c_sw_12x24.nl"
   character(len=64) :: input_file, output_file
+  integer           :: do_profile=0
   integer           :: nl_unit
 
   ! Input namelists
   namelist /io/       input_file, output_file
-
-  ! Initialize GPTL if enabled
-#ifdef ENABLE_GPTL
-  ret = GPTLinitialize()
-#endif
+  namelist /debug/    do_profile
 
   ! Get the number of arguments
   narg = command_argument_count()
@@ -50,8 +47,18 @@ program sw_driver
   ! Read the data IO settings from the namelist
   read(nl_unit, nml=io)
 
+  ! Read the debug settings from the namelist
+  read(nl_unit, nml=debug)
+
   ! Get OMP_NUM_THREADS value
   nthreads = omp_get_max_threads()
+
+  ! Initialize GPTL if enabled
+#ifdef ENABLE_GPTL
+  if (do_profile == 1) then
+    ret = GPTLinitialize()
+  end if
+#endif
 
   ! Read the input state from the NetCDF input file
   call read_state(TRIM(input_file))
@@ -99,8 +106,10 @@ program sw_driver
 
   ! Turn off GPTL if enabled
 #ifdef ENABLE_GPTL
-  ret = gptlpr(0)
-  ret = gptlfinalize()
+  if (do_profile == 1) then
+    ret = gptlpr(0)
+    ret = gptlfinalize()
+  end if
 #endif
 
 end program sw_driver
