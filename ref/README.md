@@ -89,20 +89,20 @@ See below for more information.
 If GPTL is installed and loaded onto system paths, this kernel may be built with support for
 GPTL profiling. There are two options.
 
-The first option enables you to	insert your own	custom GPTL timers into the code to suite your
-own purposes.
+The first option enables GPTL and allows you to	insert your own	custom GPTL timers into the code
+to suit your own purposes.
 
 To enable GPTL, add `-DENABLE_GPTL=1` to the `cmake` command.  For example:
 ```bash
 $ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 ..
 ```
 
-The second option enables autoprofiling, which will give you timings for all subroutine calls
+The second option enables GPTL autoprofiling, which will give you timings for all subroutine calls
 in the kernel.
 
 To enable GPTL autoprofiling, also add `-DENABLE_AUTOPROFILING=1` to the `cmake` command.  For example:
 ```bash
-$ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..`
+$ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
 ```
 
 ### Machines that use modules to manage software
