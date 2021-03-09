@@ -108,7 +108,7 @@ jobs:
           cd build
           export CC=gcc-10
           export FC=gfortran-10
-          export ${MPIEXEC_PREFLAGS}=--oversubscribe
+          export MPIEXEC_PREFLAGS=--oversubscribe
           cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
           make
           ctest --output-on-failure
