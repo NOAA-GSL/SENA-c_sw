@@ -26,7 +26,11 @@ jobs:
       # Unlink gcc
       - name: Unlink gcc
         run: brew unlink gcc@8 && brew unlink gcc@9
-        
+
+      # Install OpenMPI
+      - name: Install OpenMPI
+        run: brew install open-mpi
+
       # Install netCDF
       - name: Install netCDF 
         run: HOMEBREW_NO_AUTO_UPDATE=1 && brew install netcdf 
@@ -95,6 +99,19 @@ jobs:
           ctest
           grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
        
+      # Test MPI support
+      - name: Build c_sw with MPI enabled
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc-10
+          export FC=gfortran-10
+          cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
+          make
+          ctest
+
   ubuntu_build:
     name: Ubuntu Build
     # Run on ubuntu-latest
@@ -111,6 +128,10 @@ jobs:
       # Update
       - name: Update
         run: sudo apt-get update
+
+      # Install OpenMPI
+      - name: Install OpenMPI
+        run: sudo apt-get install openmpi-bin libopenmpi-dev -y
 
       # Install NetCDF
       - name: Install NetCDF
@@ -181,3 +202,16 @@ jobs:
           make
           ctest
           grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
+
+        # Test MPI support
+        - name: Build c_sw with MPI enabled
+          run: |
+            cd ref
+            rm -rf build
+            mkdir build
+            cd build
+            export CC=gcc
+            export FC=gfortran
+            cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
+            make
+            ctest

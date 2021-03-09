@@ -1137,13 +1137,13 @@ contains
   !------------------------------------------------------------------
   ! print_state
   !
-  ! prints statistics for the kernel state variables
+  ! Prints statistics for the kernel state variables
   !------------------------------------------------------------------
   subroutine print_state(msg)
 
     character(len=*) :: msg
 
-    write(*,*)
+    write(*,'(A4)') "TEST"
     write(*,'(A5,A115)') "TEST ", repeat("=",115)
     write(*,'(A5,A20)') "TEST ", msg
     write(*,'(A5,A115)') "TEST ", repeat("=",115)
@@ -1189,21 +1189,22 @@ contains
     call print_3d_variable("divg_d", divg_d)
 
     write(*,'(A5,A115)') "TEST ", repeat("-",115)
-    write(*,*)
+    write(*,'(A4)') "TEST"
 
   end subroutine print_state
 
+
   !------------------------------------------------------------------
-  ! write_state_test
+  ! write_state_stats
   !
-  ! writes statistics for the kernel state variables to a separate file for each MPI rank
+  ! Writes statistics for the kernel state variables to the given file unit
   !------------------------------------------------------------------
-  subroutine write_state_test(msg,test_file_unit)
+  subroutine write_state_stats(msg, test_file_unit)
 
     character(len= *),intent(IN) :: msg
     integer          ,intent(IN) :: test_file_unit
 
-    write(test_file_unit,*)
+    write(test_file_unit,'(A4)') "TEST"
     write(test_file_unit,'(A5,A115)') "TEST ", repeat("=",115)
     write(test_file_unit,'(A5,A20)') "TEST ", msg
     write(test_file_unit,'(A5,A115)') "TEST ", repeat("=",115)
@@ -1249,15 +1250,15 @@ contains
     call write_3d_variable(test_file_unit,"divg_d", divg_d)
 
     write(test_file_unit,'(A5,A115)') "TEST ", repeat("-",115)
-    write(test_file_unit,*)
+    write(test_file_unit,'(A4)') "TEST"
 
-  end subroutine write_state_test
+  end subroutine write_state_stats
 
 
   !------------------------------------------------------------------
   ! print_3d_variable
   !
-  ! prints statistics for a 3d state variable
+  ! Prints statistics for a 3d state variable
   !------------------------------------------------------------------
   subroutine print_3d_variable(name, data)
 
@@ -1275,7 +1276,7 @@ contains
   !------------------------------------------------------------------
   ! write_3d_variable
   !
-  ! writes statistics for a 3d state variable to a separate file for each MPI rank
+  ! Writes statistics for a 3d state variable to the given file unit
   !------------------------------------------------------------------
   subroutine write_3d_variable(unit, name, data)
 
@@ -1285,7 +1286,7 @@ contains
 
     ! Note: Assumed shape array sections always start with index=1 for all dimensions
     !       So we don't have to know start/end indices here
-    write(unit,'(A5, A15,5E20.11)') "TEST ", name, minval(data), maxval(data), data(1,1,1),  &
+    write(unit,'(A5, A15,5ES20.10)') "TEST ", name, minval(data), maxval(data), data(1,1,1),  &
                                              data(size(data,1), size(data,2), size(data,3)), &
                                              sqrt(sum(data**2) / size(data))
 
@@ -1294,7 +1295,7 @@ contains
   !------------------------------------------------------------------
   ! print_2d_variable
   !
-  ! prints statistics for a 2d state variable
+  ! Prints statistics for a 2d state variable
   !------------------------------------------------------------------
   subroutine print_2d_variable(name, data)
 
@@ -1313,7 +1314,7 @@ contains
   !------------------------------------------------------------------
   ! write_2d_variable
   !
-  ! writes statistics for a 2d state variable to a separate file for each MPI rank
+  ! Writes statistics for a 2d state variable to the given file unit
   !------------------------------------------------------------------
   subroutine write_2d_variable(unit, name, data)
 
@@ -1323,7 +1324,7 @@ contains
 
     ! Note: Assumed shape array sections always start with index=1 for all dimensions
     !       So we don't have to know start/end indices here
-    write(unit,'(A5, A15,5E20.11)') "TEST ", name, minval(data), maxval(data), data(1,1), &
+    write(unit,'(A5, A15,5ES20.10)') "TEST ", name, minval(data), maxval(data), data(1,1), &
                                              data(size(data,1), size(data,2)),            &
                                              sqrt(sum(data**2) / size(data))
 
