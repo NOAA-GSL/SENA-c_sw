@@ -66,7 +66,7 @@ jobs:
           export FC=gfortran-10          
           cmake -DCMAKE_BUILD_TYPE=debug ..
           make
-          ctest
+          ctest --output-on-failure
           
       # Test release mode 
       - name: Test c_sw Release
@@ -79,7 +79,7 @@ jobs:
           export FC=gfortran-10           
           cmake -DCMAKE_BUILD_TYPE=release ..
           make
-          ctest       
+          ctest --output-on-failure
 
       # Test GPTL support
       - name: Build c_sw with GPTL profiling
@@ -96,7 +96,7 @@ jobs:
           export FC=gfortran-10
           cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
           make
-          ctest
+          ctest --output-on-failure
           grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
        
       # Test MPI support
@@ -110,7 +110,7 @@ jobs:
           export FC=gfortran-10
           cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
           make
-          ctest
+          ctest --output-on-failure
 
   ubuntu_build:
     name: Ubuntu Build
@@ -170,7 +170,7 @@ jobs:
           export FC=gfortran
           cmake -DCMAKE_BUILD_TYPE=debug ..
           make
-          ctest
+          ctest --output-on-failure
 
       # Test release mode
       - name: Build c_sw release
@@ -183,7 +183,7 @@ jobs:
           export FC=gfortran
           cmake -DCMAKE_BUILD_TYPE=release ..
           make
-          ctest
+          ctest --output-on-failure
 
       # Test GPTL support
       - name: Build c_sw with GPTL profiling
@@ -200,7 +200,7 @@ jobs:
           export FC=gfortran
           cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_GPTL=1 -DENABLE_AUTOPROFILING=1 ..
           make
-          ctest
+          ctest --output-on-failure
           grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
 
       # Test MPI support
@@ -214,4 +214,4 @@ jobs:
           export FC=gfortran
           cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
           make
-          ctest
+          ctest --output-on-failure
