@@ -203,15 +203,15 @@ jobs:
           ctest
           grep sw_core_mod_MOD_c_sw test/timing.000000 | grep SUM
 
-        # Test MPI support
-        - name: Build c_sw with MPI enabled
-          run: |
-            cd ref
-            rm -rf build
-            mkdir build
-            cd build
-            export CC=gcc
-            export FC=gfortran
-            cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
-            make
-            ctest
+      # Test MPI support
+      - name: Build c_sw with MPI support
+        run: |
+          cd ref
+          rm -rf build
+          mkdir build
+          cd build
+          export CC=gcc
+          export FC=gfortran
+          cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
+          make
+          ctest
