@@ -115,17 +115,18 @@ GPTL timing information is written to `timing.*` files in the directory where th
 ### Building with MPI support
 
 This kernel can be built with MPI to simulate a parallel execution.  The `c_sw` kernel was extracted
-from a much large MPI code where halo exchanges take place at a higher level. Therefore, this kernel
-is not a true MPI program. However, when built with MPI support this kernel simulates a MPI execution
-by running N copies of the serial version and performing a single, simulated, halo exchange (not 
-implemented yet). To enable MPI execution, add `-DENABLE_MPI=1` to the `cmake` command.  For example:
+from a much larger MPI code where halo exchanges took place at a higher level. Therefore, this kernel
+is not a true parallel program. However, when built with MPI support this kernel simulates a parallel 
+MPI execution by running N copies of the serial version and performing a single, simulated, halo
+exchange (not implemented yet). To enable simulated parallel MPI execution, add `-DENABLE_MPI=1` to
+the `cmake` command. For example:
 
 ```bash
 $ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
 ```
 
-On execution input and output statistics for each rank are written to files named according to their MPI
-rank.  For example:
+On execution the input and output statistics for each rank are written to files named according to
+their MPI rank. For example:
 
 ```
 c_sw_12x24.log.0000
@@ -134,7 +135,7 @@ c_sw_12x24.log.0002
 c_sw_12x24.log.0003
 ```
 
-Each of the log files should be indentical because each rank is running the same code with the same input.
+Each of the log files should be identical because each rank is running the same code with the same input.
 The tests in the test suite verify correctness by comparing each of the outputs to the original serial
 baseline output.
 
@@ -195,6 +196,8 @@ To run a specific test with full output to get more information about a failure 
 ```bash
 $ ctest -VV -R regression_12x24
 ```
+
+NOTE: The MPI tests are only run by `ctest` when the kernel is built with MPI support.
 
 ## Build and test script
 
