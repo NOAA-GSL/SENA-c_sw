@@ -125,7 +125,7 @@ the `cmake` command. For example:
 $ cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 ..
 ```
 
-On execution the input and output statistics for each rank are written to files named according to
+On execution, the input and output statistics for each rank are written to files named according to
 their MPI rank. For example:
 
 ```
