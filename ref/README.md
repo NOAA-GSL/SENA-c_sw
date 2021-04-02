@@ -85,6 +85,43 @@ On many systems, the above will suffice. However, some systems will require you 
 find dependencies, particularly if software depencencies are not installed in standard locations.
 See below for more information.
 
+### Increasing Data Size
+
+With the coming exascale supercomputers, with more computations and memory per node, this kernel has the
+functionality to increase the database under control of the user.  The variable: interpFactor in the 
+namelist files allows the user to increase the size of the database.  The variable interpFactor is a 
+positive integer or zero which controls the addition of interpolated points to the database.  If 
+interpFactor is zero, no additional points are added to the database.
+
+Here is an example:
+
+An interpolation factor of 1 means 1 new interpolated element is added between 
+the original data.  So for example, a 3x3 matrix with interpFactor=1 is interpolated
+and becomes a 5x5 matrix
+
+The x's are points from the original data.  The o's are points to be interpolated 
+between the original data. 
+
+```
+[ x x x ]     ==> [x o x o x]
+[ x x x ]         [o o o o o]
+[ x x x ]         [x o x o x]
+                  [o o o o o]
+                  [x o x o x]
+```
+
+And an interpFactor=2, transforms a 3x3 matrix into a 7x7 matrix.
+
+```
+[ x x x ]     ==> [x o o x o o x]
+[ x x x ]         [o o o o o o o]
+[ x x x ]         [o o o o o o o]
+                  [x o o x o o x]
+                  [o o o o o o o]
+                  [o o o o o o o]
+                  [x o o x o o x]
+```
+
 ### Building with GPTL profiling support
 
 [GPTL](https://github.com/jmrosinski/GPTL) is a timing library that can be used to generate timing
