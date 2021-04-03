@@ -87,11 +87,12 @@ See below for more information.
 
 ### Increasing Data Size
 
-With the coming exascale supercomputers, with more computations and memory per node, this kernel has the
-functionality to increase the database under control of the user.  The variable: interpFactor in the 
-namelist files allows the user to increase the size of the database.  The variable interpFactor is a 
-positive integer or zero which controls the addition of interpolated points to the database.  If 
-interpFactor is zero, no additional points are added to the database.
+With the coming exascale supercomputers, with faster computations and larger memory per node, 
+this kernel has the functionality to increase the database under control of the user.  The 
+variable: interpFactor in the namelist files allows the user to increase the size of the 
+database.  The variable interpFactor is a positive integer or zero which controls the 
+addition of interpolated points to the database.  If interpFactor is zero, no additional 
+points are added to the database.
 
 Here is an example:
 
@@ -121,6 +122,14 @@ And an interpFactor=2, transforms a 3x3 matrix into a 7x7 matrix.
                   [o o o o o o o]
                   [x o o x o o x]
 ```
+The interpFactor can be modified in the namelist files without rebuilding the kernel; 
+the interpolation is done "on the fly" before calling the computational kernel within 
+SENA-c_sw.  The reference text logs are correct for interpFactor 0 and 3 currently.  
+Alas, when you use another interpFActor, the numbers in the text logs change such that 
+a comparison to the reference text logs will not be exact.  That said, the text logs 
+should be numerically "close" to the reference texts, at least the first two or three 
+significant digits of each floating-point number should match.
+
 
 ### Building with GPTL profiling support
 

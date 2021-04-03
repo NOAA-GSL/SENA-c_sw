@@ -473,7 +473,6 @@ contains
 
   end subroutine divergence_corner
 
-
   !------------------------------------------------------------------
   ! d2a2c_vect
   !
@@ -502,11 +501,9 @@ contains
     ! Local
     real, dimension(isd:ied, jsd:jed) :: utmp, vtmp
     integer :: i, j, ifirst, ilast
-    real, dimension(4) :: ua_slice, dxa_slice
-    real, dimension(4) :: va_slice, dya_slice
+    integer :: ret
 
 #ifdef ENABLE_GPTL
-  integer :: ret
   if (do_profile == 1) then
      ret = gptlstart ('d2a2c_vect')
   end if
@@ -637,15 +634,7 @@ contains
     if ( is == 1 ) then
       do j = js-1, je+1
         uc(0, j) = c1 * utmp(-2, j) + c2 * utmp(-1, j) + c3 * utmp(0, j)
-        ua_slice(1) = ua(-1,j)
-        ua_slice(2) = ua( 0,j)
-        ua_slice(3) = ua( 1,j)
-        ua_slice(4) = ua( 2,j)
-        dxa_slice(1) = dxa(-1,j)
-        dxa_slice(2) = dxa( 0,j)
-        dxa_slice(3) = dxa( 1,j)
-        dxa_slice(4) = dxa( 2,j)
-        ut(1, j) = edge_interpolate4(ua_slice, dxa_slice)
+        ut(1, j) = edge_interpolate4(ua(-1:2, j), dxa(-1:2, j))
         !Want to use the UPSTREAM value
         if (ut(1, j) < 0.) then
           uc(1, j) = ut(1, j) * sin_sg(0, j, 3)
@@ -662,15 +651,7 @@ contains
           uc(npx-1, j) = c1 * utmp(npx-3, j) + c2 * utmp(npx-2, j) + c3 * utmp(npx-1, j)
           i = npx
           ut(i, j) = 0.25 * (-ua(i-2, j) + 3. * (ua(i-1, j) + ua(i, j)) - ua(i+1, j))
-          ua_slice(1) = ua(i-2,j)
-          ua_slice(2) = ua(i-1,j)
-          ua_slice(3) = ua(i+0,j)
-          ua_slice(4) = ua(i+1,j)
-          dxa_slice(1) = dxa(i-2,j)
-          dxa_slice(2) = dxa(i-1,j)
-          dxa_slice(3) = dxa(i+0,j)
-          dxa_slice(4) = dxa(i+1,j)
-          ut(i, j) = edge_interpolate4(ua_slice, dxa_slice)
+          ut(i, j) = edge_interpolate4(ua(i-2:i+1, j), dxa(i-2:i+1, j))
           if ( ut(i,j) < 0. ) then
             uc(i, j) = ut(i, j) * sin_sg(i-1, j, 3)
           else
@@ -727,15 +708,7 @@ contains
     do j = js-1, je+2
       if ( j == 1 ) then
         do i = is-1, ie+1
-          va_slice(1) = va(i,-1)
-          va_slice(2) = va(i, 0)
-          va_slice(3) = va(i,+1)
-          va_slice(4) = va(i,+2)
-          dya_slice(1) = dya(i,-1)
-          dya_slice(2) = dya(i, 0)
-          dya_slice(3) = dya(i,+1)
-          dya_slice(4) = dya(i,+2)
-          vt(i, j) = edge_interpolate4(va_slice, dya_slice)
+          vt(i, j) = edge_interpolate4(va(i, -1:2), dya(i, -1:2))
           if ( vt(i, j) < 0. ) then
             vc(i, j) = vt(i, j) * sin_sg(i, j-1, 4)
           else
@@ -755,15 +728,7 @@ contains
       elseif ( j == npy ) then
         do i = is-1, ie+1
           vt(i, j) = 0.25 * (-va(i, j-2) + 3. * (va(i, j-1) + va(i, j)) - va(i, j+1))
-          va_slice(1) = va(i,j-2)
-          va_slice(2) = va(i,j-1)
-          va_slice(3) = va(i,j+0)
-          va_slice(4) = va(i,j+1)
-          dya_slice(1) = dya(i,j-2)
-          dya_slice(2) = dya(i,j-1)
-          dya_slice(3) = dya(i,j+0)
-          dya_slice(4) = dya(i,j+1)
-          vt(i, j) = edge_interpolate4(va_slice, dya_slice)
+          vt(i, j) = edge_interpolate4(va(i, j-2:j+1), dya(i, j-2:j+1))
           if ( vt(i, j) < 0. ) then
             vc(i, j) = vt(i, j) * sin_sg(i, j-1, 4)
           else
