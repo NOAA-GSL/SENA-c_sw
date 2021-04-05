@@ -26,7 +26,7 @@ contains
   ! l1=fdims(1)
   ! u1=fdims(2)
   ! l2=fdims(3)
-  ! l2=fdims(4)
+  ! u2=fdims(4)
   ! allocate (interpArray(l1:u1,l2:u2))
   ! call interpolateArray2D(originalArray, odims, interpolatedArray, fdims,
   ! interpFactor)
