@@ -1435,10 +1435,9 @@ contains
   !
   ! Write state to NetCDF file
   !------------------------------------------------------------------
-  subroutine write_state(filename, interpFactor)
+  subroutine write_state(filename)
 
     character(len=*), intent(in) :: filename
-    integer, intent(in)          :: interpFactor
 
     ! General netCDF variables
     integer :: ncFileID
@@ -1492,8 +1491,8 @@ contains
     call define_dim(ncFileID, "nj", jed-jsd+1, njDimID)
 
     ! Define the i+1, j+1 dimensions
-    call define_dim(ncFileID, "nip1", ied-isd+2 + interpFactor, nip1DimID)
-    call define_dim(ncFileID, "njp1", jed-jsd+2 + interpFactor, njp1DimID)
+    call define_dim(ncFileID, "nip1", ied-isd+2 , nip1DimID)
+    call define_dim(ncFileID, "njp1", jed-jsd+2 , njp1DimID)
 
     ! Define the k dimension
     call define_dim(ncFileID, "nk", npz, nkDimID)
@@ -1988,43 +1987,81 @@ contains
     call deallocate_state()
     call allocate_state()
 
+!    sin_sg = new_sin_sg
+!   cos_sg = new_cos_sg
+!   rsin2  = new_rsin2
+!   dxa    = new_dxa
+!   dya    = new_dya
+!   cosa_s = new_cosa_s
+!   rarea  = new_rarea
+!   sina_v = new_sina_v
+!   cosa_v = new_cosa_v
+!   rsin_v = new_rsin_v
+!   rdyc   = new_rdyc
+!   dx     = new_dx
+!   dyc    = new_dyc
+!   sina_u = new_sina_u
+!   cosa_u = new_cosa_u
+!   rdxc   = new_rdxc
+!   dy     = new_dy
+!   dxc    = new_dxc
+!   rsin_u = new_rsin_u
+!   rarea_c= new_rarea_c
+!   fC     = new_fC
+!   delpc  = new_delpc
+!   delp   = new_delp
+!   ptc    = new_ptc
+!   pt     = new_pt
+!   w      = new_w
+!   ua     = new_ua
+!   va     = new_va
+!   wc     = new_wc
+!   ut     = new_ut
+!   vt     = new_vt
+!   v      = new_v
+!   uc     = new_uc
+!   u      = new_u
+!   vc     = new_vc
+!   divg_d = new_divg_d
+
     ! Switch the old arrays to the new arrays.
-    sin_sg = new_sin_sg
-    cos_sg = new_cos_sg
-    rsin2  = new_rsin2
-    dxa    = new_dxa
-    dya    = new_dya
-    cosa_s = new_cosa_s
-    rarea  = new_rarea
-    sina_v = new_sina_v
-    cosa_v = new_cosa_v
-    rsin_v = new_rsin_v
-    rdyc   = new_rdyc
-    dx     = new_dx
-    dyc    = new_dyc
-    sina_u = new_sina_u
-    cosa_u = new_cosa_u
-    rdxc   = new_rdxc
-    dy     = new_dy
-    dxc    = new_dxc
-    rsin_u = new_rsin_u
-    rarea_c= new_rarea_c
-    fC     = new_fC
-    delpc  = new_delpc
-    delp   = new_delp
-    ptc    = new_ptc
-    pt     = new_pt
-    w      = new_w
-    ua     = new_ua
-    va     = new_va
-    wc     = new_wc
-    ut     = new_ut
-    vt     = new_vt
-    v      = new_v
-    uc     = new_uc
-    u      = new_u
-    vc     = new_vc
-    divg_d = new_divg_d
+    rarea  (isd:ied,   jsd:jed     ) = new_rarea  (isd:ied,   jsd:jed     )
+    rarea_c(isd:ied+1, jsd:jed+1   ) = new_rarea_c(isd:ied+1, jsd:jed+1   )
+    sin_sg (isd:ied,   jsd:jed,   :) = new_sin_sg (isd:ied,   jsd:jed,   :)
+    cos_sg (isd:ied,   jsd:jed,   :) = new_cos_sg (isd:ied,   jsd:jed,   :)
+    sina_v (isd:ied,   jsd:jed+1   ) = new_sina_v (isd:ied,   jsd:jed+1   )
+    cosa_v (isd:ied,   jsd:jed+1   ) = new_cosa_v (isd:ied,   jsd:jed+1   )
+    sina_u (isd:ied+1, jsd:jed     ) = new_sina_u (isd:ied+1, jsd:jed     )
+    cosa_u (isd:ied+1, jsd:jed     ) = new_cosa_u (isd:ied+1, jsd:jed     )
+    fC     (isd:ied+1, jsd:jed+1   ) = new_fC     (isd:ied+1, jsd:jed+1   )
+    rdxc   (isd:ied+1, jsd:jed     ) = new_rdxc   (isd:ied+1, jsd:jed     )
+    rdyc   (isd:ied,   jsd:jed+1   ) = new_rdyc   (isd:ied,   jsd:jed+1   )
+    dx     (isd:ied,   jsd:jed+1   ) = new_dx     (isd:ied,   jsd:jed+1   )
+    dy     (isd:ied+1, jsd:jed     ) = new_dy     (isd:ied+1, jsd:jed     )
+    dxc    (isd:ied+1, jsd:jed     ) = new_dxc    (isd:ied+1, jsd:jed     )
+    dyc    (isd:ied,   jsd:jed+1   ) = new_dyc    (isd:ied,   jsd:jed+1   )
+    cosa_s (isd:ied,   jsd:jed     ) = new_cosa_s (isd:ied,   jsd:jed     )
+    rsin_u (isd:ied+1, jsd:jed     ) = new_rsin_u (isd:ied+1, jsd:jed     )
+    rsin_v (isd:ied,   jsd:jed+1   ) = new_rsin_v (isd:ied,   jsd:jed+1   )
+    rsin2  (isd:ied,   jsd:jed     ) = new_rsin2  (isd:ied,   jsd:jed     )
+    dxa    (isd:ied,   jsd:jed     ) = new_dxa    (isd:ied,   jsd:jed     )
+    dya    (isd:ied,   jsd:jed     ) = new_dya    (isd:ied,   jsd:jed     )
+    delpc  (isd:ied,   jsd:jed,   :) = new_delpc  (isd:ied,   jsd:jed,   :)
+    delp   (isd:ied,   jsd:jed,   :) = new_delp   (isd:ied,   jsd:jed,   :)
+    ptc    (isd:ied,   jsd:jed,   :) = new_ptc    (isd:ied,   jsd:jed,   :)
+    pt     (isd:ied,   jsd:jed,   :) = new_pt     (isd:ied,   jsd:jed,   :)
+    u      (isd:ied,   jsd:jed+1, :) = new_u      (isd:ied,   jsd:jed+1, :)
+    v      (isd:ied+1, jsd:jed,   :) = new_v      (isd:ied+1, jsd:jed,   :)
+    w      (isd:ied,   jsd:jed,   :) = new_w      (isd:ied,   jsd:jed,   :)
+    uc     (isd:ied+1, jsd:jed,   :) = new_uc     (isd:ied+1, jsd:jed,   :)
+    w      (isd:ied,   jsd:jed,   :) = new_w      (isd:ied,   jsd:jed,   :)
+    ua     (isd:ied,   jsd:jed,   :) = new_ua     (isd:ied,   jsd:jed,   :)
+    vc     (isd:ied,   jsd:jed+1, :) = new_vc     (isd:ied,   jsd:jed+1, :)
+    va     (isd:ied,   jsd:jed,   :) = new_va     (isd:ied,   jsd:jed,   :)
+    wc     (isd:ied,   jsd:jed,   :) = new_wc     (isd:ied,   jsd:jed,   :)
+    ut     (isd:ied,   jsd:jed,   :) = new_ut     (isd:ied,   jsd:jed,   :)
+    vt     (isd:ied,   jsd:jed,   :) = new_vt     (isd:ied,   jsd:jed,   :)
+    divg_d (isd:ied+1, jsd:jed+1, :) = new_divg_d (isd:ied+1, jsd:jed+1, :)
 
     ! Deallocate the new arrays.  They are not needed now.
 

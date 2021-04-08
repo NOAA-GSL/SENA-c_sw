@@ -154,7 +154,7 @@ program sw_driver
 
   ! Write the output state to the NetCDF output file
   if(rank == 0) then
-    call write_state(TRIM(output_data_dir) // "/" // TRIM(output_file), interpFactor)
+    call write_state(TRIM(output_data_dir) // "/" // TRIM(output_file))
   endif
 
   ! Write timing information
