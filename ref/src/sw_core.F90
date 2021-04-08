@@ -1984,45 +1984,9 @@ contains
     npy = je + 1
     npz = 127
 
+    ! State is allocated with the new dimensions.
     call deallocate_state()
     call allocate_state()
-
-!    sin_sg = new_sin_sg
-!   cos_sg = new_cos_sg
-!   rsin2  = new_rsin2
-!   dxa    = new_dxa
-!   dya    = new_dya
-!   cosa_s = new_cosa_s
-!   rarea  = new_rarea
-!   sina_v = new_sina_v
-!   cosa_v = new_cosa_v
-!   rsin_v = new_rsin_v
-!   rdyc   = new_rdyc
-!   dx     = new_dx
-!   dyc    = new_dyc
-!   sina_u = new_sina_u
-!   cosa_u = new_cosa_u
-!   rdxc   = new_rdxc
-!   dy     = new_dy
-!   dxc    = new_dxc
-!   rsin_u = new_rsin_u
-!   rarea_c= new_rarea_c
-!   fC     = new_fC
-!   delpc  = new_delpc
-!   delp   = new_delp
-!   ptc    = new_ptc
-!   pt     = new_pt
-!   w      = new_w
-!   ua     = new_ua
-!   va     = new_va
-!   wc     = new_wc
-!   ut     = new_ut
-!   vt     = new_vt
-!   v      = new_v
-!   uc     = new_uc
-!   u      = new_u
-!   vc     = new_vc
-!   divg_d = new_divg_d
 
     ! Switch the old arrays to the new arrays.
     rarea  (isd:ied,   jsd:jed     ) = new_rarea  (isd:ied,   jsd:jed     )
@@ -2054,7 +2018,6 @@ contains
     v      (isd:ied+1, jsd:jed,   :) = new_v      (isd:ied+1, jsd:jed,   :)
     w      (isd:ied,   jsd:jed,   :) = new_w      (isd:ied,   jsd:jed,   :)
     uc     (isd:ied+1, jsd:jed,   :) = new_uc     (isd:ied+1, jsd:jed,   :)
-    w      (isd:ied,   jsd:jed,   :) = new_w      (isd:ied,   jsd:jed,   :)
     ua     (isd:ied,   jsd:jed,   :) = new_ua     (isd:ied,   jsd:jed,   :)
     vc     (isd:ied,   jsd:jed+1, :) = new_vc     (isd:ied,   jsd:jed+1, :)
     va     (isd:ied,   jsd:jed,   :) = new_va     (isd:ied,   jsd:jed,   :)
@@ -2064,43 +2027,42 @@ contains
     divg_d (isd:ied+1, jsd:jed+1, :) = new_divg_d (isd:ied+1, jsd:jed+1, :)
 
     ! Deallocate the new arrays.  They are not needed now.
-
-    deallocate(new_sin_sg )
-    deallocate(new_cos_sg )
-    deallocate(new_rsin2  )
-    deallocate(new_dxa    )
-    deallocate(new_dya    )
-    deallocate(new_cosa_s )
-    deallocate(new_rarea  )
-    deallocate(new_sina_v )
-    deallocate(new_cosa_v )
-    deallocate(new_rsin_v )
-    deallocate(new_rdyc   )
-    deallocate(new_dx     )
-    deallocate(new_dyc    )
-    deallocate(new_sina_u )
-    deallocate(new_cosa_u )
-    deallocate(new_rdxc   )
-    deallocate(new_dy     )
-    deallocate(new_dxc    )
-    deallocate(new_rsin_u )
-    deallocate(new_rarea_c)
-    deallocate(new_fC     )
-    deallocate(new_delpc  )
-    deallocate(new_delp   )
-    deallocate(new_ptc    )
-    deallocate(new_pt     )
-    deallocate(new_w      )
-    deallocate(new_ua     )
-    deallocate(new_va     )
-    deallocate(new_wc     )
-    deallocate(new_ut     )
-    deallocate(new_vt     )
-    deallocate(new_v      )
-    deallocate(new_uc     )
-    deallocate(new_u      )
-    deallocate(new_vc     )
-    deallocate(new_divg_d )
+    deallocate( new_rarea   )  
+    deallocate( new_rarea_c )
+    deallocate( new_sin_sg  )
+    deallocate( new_cos_sg  )
+    deallocate( new_sina_v  )
+    deallocate( new_cosa_v  )
+    deallocate( new_sina_u  )
+    deallocate( new_cosa_u  )
+    deallocate( new_fC      )
+    deallocate( new_rdxc    )
+    deallocate( new_rdyc    )
+    deallocate( new_dx      )
+    deallocate( new_dy      )
+    deallocate( new_dxc     )
+    deallocate( new_dyc     )
+    deallocate( new_cosa_s  )
+    deallocate( new_rsin_u  )
+    deallocate( new_rsin_v  )
+    deallocate( new_rsin2   )
+    deallocate( new_dxa     )
+    deallocate( new_dya     )
+    deallocate( new_delpc   )
+    deallocate( new_delp    )
+    deallocate( new_ptc     )
+    deallocate( new_pt      )
+    deallocate( new_u       )
+    deallocate( new_v       )
+    deallocate( new_w       )
+    deallocate( new_uc      )
+    deallocate( new_ua      )
+    deallocate( new_vc      )
+    deallocate( new_va      )
+    deallocate( new_wc      )
+    deallocate( new_ut      )
+    deallocate( new_vt      )
+    deallocate( new_divg_d  )
 
   end subroutine interpolate_state
 
