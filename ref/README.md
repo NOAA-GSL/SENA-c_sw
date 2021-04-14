@@ -312,7 +312,7 @@ $ mpirun -np 4 exe/c_sw ../test/test_input/c_sw_12x24.nl
 - `test/` contains the tests, test input, and test output
 - `test/data/outputs` is where test output data is written
 - `test/test_input` contains the test namelist input files
-- `test/test_output` contains the test baselines
+<!-- - `test/test_output` contains the test baselines -->
 - `exe/` contains the installed executable
 
 ## Troubleshooting

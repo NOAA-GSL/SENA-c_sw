@@ -42,6 +42,10 @@ will be added as they are developed.
 
 This repository is organized as follows.
 
+### `baselines/`
+
+Contains the test baselines.
+
 ### `data/`
 
 Contains the reference input and output data all implementations must use
