@@ -44,7 +44,8 @@ This repository is organized as follows.
 
 ### `baselines/`
 
-Contains the test baselines.
+Contains the test baselines all implementations must use
+for testing and validation..
 
 ### `data/`
 
