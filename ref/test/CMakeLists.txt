@@ -18,6 +18,17 @@ list( APPEND c_sw_test_input
   test_input/c_sw_48x48_3.nl
 )
 
+list( APPEND c_sw_baselines
+  baselines/c_sw_12x24_0.test
+  baselines/c_sw_24x24_0.test
+  baselines/c_sw_48x24_0.test
+  baselines/c_sw_48x48_0.test
+  baselines/c_sw_12x24_3.test
+  baselines/c_sw_24x24_3.test
+  baselines/c_sw_48x24_3.test
+  baselines/c_sw_48x48_3.test
+)
+
 list( APPEND c_sw_test_output
   test_output/c_sw_12x24_0.test
   test_output/c_sw_24x24_0.test
@@ -51,13 +62,12 @@ foreach(FILENAME ${c_sw_test_input})
            ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME} )
 endforeach(FILENAME)
 
-# Create data directory for reference output and symlink all files
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_output)
-foreach(FILENAME ${c_sw_test_output})
+foreach(BASELINE_FILENAME TEST_OUTPUT_FILENAME IN ZIP_LISTS c_sw_baselines c_sw_test_output)
     execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink
-           ${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}
-           ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME} )
-endforeach(FILENAME)
+           ${CMAKE_CURRENT_SOURCE_DIR}/../../${BASELINE_FILENAME}
+           ${CMAKE_CURRENT_BINARY_DIR}/${TEST_OUTPUT_FILENAME} )
+endforeach()
 
 set(COMPARE_SH ${CMAKE_BINARY_DIR}/bin/c_sw_compare.sh)
 
