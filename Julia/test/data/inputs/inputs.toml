@@ -8,6 +8,7 @@
   output_file = "test/data/outputs/c_sw_12x24_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_12x24_0.test.out"
+  interpFactor = 0
 
 [c_sw_12x24_3]
   name = "c_sw_12x24_3"
@@ -17,6 +18,7 @@
   output_file = "test/data/outputs/c_sw_12x24_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_12x24_3.test.out"
+  interpFactor = 3
 
 [c_sw_24x24_0]
   name = "c_sw_24x24_0"
@@ -26,6 +28,7 @@
   output_file = "test/data/outputs/c_sw_24x24_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_24x24_0.test.out"
+  interpFactor = 0
 
 [c_sw_24x24_3]
   name = "c_sw_24x24_3"
@@ -35,6 +38,7 @@
   output_file = "test/data/outputs/c_sw_24x24_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_24x24_3.test.out"
+  interpFactor = 3
 
 [c_sw_48x24_0]
   name = "c_sw_48x24_0"
@@ -44,6 +48,7 @@
   output_file = "test/data/outputs/c_sw_48x24_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x24_0.test.out"
+  interpFactor = 0
 
 [c_sw_48x24_3]
   name = "c_sw_48x24_3"
@@ -53,6 +58,7 @@
   output_file = "test/data/outputs/c_sw_48x24_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x24_3.test.out"
+  interpFactor = 3
 
 [c_sw_48x48_0]
   name = "c_sw_48x48_0"
@@ -62,6 +68,7 @@
   output_file = "test/data/outputs/c_sw_48x48_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x48_0.test.out"
+  interpFactor = 0
 
 [c_sw_48x48_3]
   name = "c_sw_48x48_3"
@@ -71,3 +78,4 @@
   output_file = "test/data/outputs/c_sw_48x48_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x48_3.test.out"
+  interpFactor = 3
