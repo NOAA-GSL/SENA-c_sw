@@ -42,14 +42,9 @@ will be added as they are developed.
 
 This repository is organized as follows.
 
-### `baselines/`
+### `test/`
 
-Contains the test baselines all implementations must use
-for testing and validation..
-
-### `data/`
-
-Contains the reference input and output data all implementations must use
+Contains the reference test baselines, input and output data all implementations must use
 for testing and validation.
 
 ### `ref/`
