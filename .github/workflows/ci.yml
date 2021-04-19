@@ -112,8 +112,8 @@ jobs:
           make
           ctest --output-on-failure
       
-      # Install Dependencies
-      - name: Install dependencies
+      # Install Julia Pkg dependencies
+      - name: Install Julia Pkg dependencies
         run:  |
           cd Julia
           julia --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -230,8 +230,8 @@ jobs:
           make
           ctest --output-on-failure
       
-      # Install Dependencies
-      - name: Install dependencies
+      # Install Julia Pkg dependencies
+      - name: Install Julia Pkg dependencies
         run:  |
           cd Julia
           julia --project=. -e 'using Pkg; Pkg.instantiate()'
