@@ -1,10 +1,10 @@
 
 
 list( APPEND c_sw_test_data
-  data/inputs/c_sw_12x24.nc
-  data/inputs/c_sw_24x24.nc
-  data/inputs/c_sw_48x24.nc
-  data/inputs/c_sw_48x48.nc
+  test/data/inputs/c_sw_12x24.nc
+  test/data/inputs/c_sw_24x24.nc
+  test/data/inputs/c_sw_48x24.nc
+  test/data/inputs/c_sw_48x48.nc
 )
 
 list( APPEND c_sw_test_input
@@ -19,14 +19,14 @@ list( APPEND c_sw_test_input
 )
 
 list( APPEND c_sw_baselines
-  baselines/c_sw_12x24_0.test
-  baselines/c_sw_24x24_0.test
-  baselines/c_sw_48x24_0.test
-  baselines/c_sw_48x48_0.test
-  baselines/c_sw_12x24_3.test
-  baselines/c_sw_24x24_3.test
-  baselines/c_sw_48x24_3.test
-  baselines/c_sw_48x48_3.test
+  test/baselines/c_sw_12x24_0.test
+  test/baselines/c_sw_24x24_0.test
+  test/baselines/c_sw_48x24_0.test
+  test/baselines/c_sw_48x48_0.test
+  test/baselines/c_sw_12x24_3.test
+  test/baselines/c_sw_24x24_3.test
+  test/baselines/c_sw_48x24_3.test
+  test/baselines/c_sw_48x48_3.test
 )
 
 list( APPEND c_sw_test_output
@@ -43,8 +43,8 @@ list( APPEND c_sw_test_output
 add_subdirectory( tools )
 
 # Create data directory for kernel input and symlink all files
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data/inputs)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test/data)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test/data/inputs)
 foreach(FILENAME ${c_sw_test_data})
     execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink
            ${CMAKE_CURRENT_SOURCE_DIR}/../../${FILENAME}
