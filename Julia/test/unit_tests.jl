@@ -10,9 +10,7 @@ using .sw_core_mod, .program
 
 current_directory = @__DIR__
 
-# input_file_name = joinpath(current_directory, "../data/inputs/c_sw_12x24.nc")
-
-input_file_name = relpath("data/inputs/c_sw_12x24.nc", ".")
+input_file_name = relpath("test/data/inputs/c_sw_12x24.nc", ".")
 
 example_dataset = NCDataset(input_file_name)
 

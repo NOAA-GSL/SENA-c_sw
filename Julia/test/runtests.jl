@@ -12,7 +12,7 @@ using Test
     # Unit tests (in progress)
     # include("unit_tests.jl")
 
-    # Pkg dependencies (not set up)
+    # Test Pkg dependencies (not set up)
     # include("PkgTests.jl")
 
 end

@@ -41,15 +41,15 @@ Some systems that use modules to manage software provide git with git-lfs suppor
 module (e.g. `module load git`).  If you are using a system that uses modules, use
 `module avail` to look for alternative versions of git that may have git-lfs support.
 
-Make sure the files in `test/data/inputs` are NetCDF data files (not text) before proceeding to
+Make sure the files in `data/inputs` are NetCDF data files (not text) before proceeding to
 the build step. A simple way to do that is with the file command as shown below:
 
 ```
-$ file test/data/inputs/*
-test/data/inputs/c_sw_12x24.nc: NetCDF Data Format data
-test/data/inputs/c_sw_24x24.nc: NetCDF Data Format data
-test/data/inputs/c_sw_48x24.nc: NetCDF Data Format data
-test/data/inputs/c_sw_48x48.nc: NetCDF Data Format data
+$ file data/inputs/*
+data/inputs/c_sw_12x24.nc: NetCDF Data Format data
+data/inputs/c_sw_24x24.nc: NetCDF Data Format data
+data/inputs/c_sw_48x24.nc: NetCDF Data Format data
+data/inputs/c_sw_48x48.nc: NetCDF Data Format data
 ```
 
 **NOTE**: If you cloned the repository with a version of git without git-lfs installed, or before you ran `git lfs install`, you
@@ -312,13 +312,14 @@ $ mpirun -np 4 exe/c_sw ../test/test_input/c_sw_12x24.nl
 - `test/` contains the tests, test input, and test output
 - `test/data/outputs` is where test output data is written
 - `test/test_input` contains the test namelist input files
+- `test/test_output` contains the test baselines
 - `exe/` contains the installed executable
 
 ## Troubleshooting
 
 1. All tests fail on my machine.
 
-    Check to make sure git-lfs is installed and that all files in `test/data/inputs` are NetCDF 
+    Check to make sure git-lfs is installed and that all files in `data/inputs` are NetCDF 
     data files and are not text. Run `git lfs pull` to download NetCDF files if necessary.
 
 2. I get `Skipping object checkout, Git LFS is not installed.` when running `git lfs pull`
@@ -329,7 +330,7 @@ $ mpirun -np 4 exe/c_sw ../test/test_input/c_sw_12x24.nl
 
     Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
 
-4. I get `git-lfs smudge -- 'test/data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.
+4. I get `git-lfs smudge -- 'data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.
 
     Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
 

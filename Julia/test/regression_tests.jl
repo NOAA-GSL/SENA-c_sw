@@ -14,11 +14,8 @@ configfile = TOML.parsefile(input_file_name)
 # Iterate over the data sets in the config file
 for (dataset, dataIODict) in configfile
     @testset "$dataset Regression " begin
-        # This conditional is a crude way to avoid the interpolation in the ref kernel 
-        if dataset[end] == '0'
-            main(dataIODict)
-            @test true
-        end
+        main(dataIODict)
+        @test true
     end 
 end
 

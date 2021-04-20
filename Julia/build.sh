@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#optionally set the number of threads 
-# export JULIA_NUM_THREADS=4
+export JULIA_NUM_THREADS=4
 
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 

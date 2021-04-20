@@ -4,7 +4,10 @@ NOTE: If you are reading this with a plain text editor, please note that this do
 formatted with Markdown syntax elements.  See https://www.markdownguide.org/cheat-sheet/
 for more information.
 
-This is the [Julia](https://github.com/JuliaLang/julia) implementation of the `c_sw` kernel extracted from the FV3 model.
+This is the [Julia](https://github.com/JuliaLang/julia) implementation of the `c_sw` kernel extracted from the FV3 model.  The number of threads is determined by
+the `JULIA_NUM_THREADS` environment variable, which defaults to 1.  Currently the number of threads is hard-coded to 4 in
+the build script, but users can customize it at runtime for other
+runs.
 
 ## Dependencies
 The following packages are required for building and running this kernel:
@@ -27,15 +30,15 @@ Some systems that use modules to manage software provide git with git-lfs suppor
 module (e.g. `module load git`).  If you are using a system that uses modules, use
 `module avail` to look for alternative versions of git that may have git-lfs support.
 
-Make sure the files in `data/inputs` are NetCDF data files (not text) before proceeding to
+Make sure the files in `test/data/inputs` are NetCDF data files (not text) before proceeding to
 the build step. A simple way to do that is with the file command as shown below:
 
 ```
-$ file data/inputs/*
-data/inputs/c_sw_12x24.nc: NetCDF Data Format data
-data/inputs/c_sw_24x24.nc: NetCDF Data Format data
-data/inputs/c_sw_48x24.nc: NetCDF Data Format data
-data/inputs/c_sw_48x48.nc: NetCDF Data Format data
+$ file test/data/inputs/*
+test/data/inputs/c_sw_12x24.nc: NetCDF Data Format data
+test/data/inputs/c_sw_24x24.nc: NetCDF Data Format data
+test/data/inputs/c_sw_48x24.nc: NetCDF Data Format data
+test/data/inputs/c_sw_48x48.nc: NetCDF Data Format data
 ```
 
 **NOTE**: If you cloned the repository with a version of git without git-lfs installed, or before you ran `git lfs install`, you
@@ -53,9 +56,6 @@ Alternatively, you can reclone the repository with git-lfs installed.
 
 * [Julia v1.6](https://julialang.org/downloads/) is required to build & test the kernel.
 * Internet access is required to install the Julia package dependencies. 
-
-
-There are alternative ways to complete the steps below. If Julia is installed on the machine in use, you may use Julia's built in [package manager](https://pkgdocs.julialang.org/dev/getting-started/#Getting-Started-with-Environments).
 
 
 ### Basic build procedure (from the directory containing this file)
@@ -88,11 +88,17 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
 ## Testing the kernel
 
+Optionally set the number of threads you want to use for the tests. For example:
+
+```bash
+$ export JULIA_NUM_THREADS=4
+```
+
 Two additional steps are required to create the test output directories before testing the kernel:
 
 ```bash
 $ julia --project=. -e 'mkdir("test/test_output")'
-$ julia --project=. -e 'mkpath("../data/outputs")'
+$ julia --project=. -e 'mkpath("test/data/outputs")'
 ```
 
 From the Julia REPL: 
@@ -100,17 +106,18 @@ From the Julia REPL:
 ```julia 
 include("test/test_c_sw.jl")
 ```
+
 If you'd prefer not to enter the Julia REPL, run: 
 ```bash
 $ julia test/test_c_sw.jl
 ```
 
-To run a specific test call julia with the `test/single_regression.jl` file providing the argument of the dataset you'd like to test. The available datasets are contained in the [inputs.TOML](test/data/inputs/inputs.toml) file.
+To run a specific test call julia with the `test/single_regression.jl` file providing the argument of the dataset you'd like to test. The available datasets are contained in the [inputs.TOML](test/test/data/inputs/inputs.toml) file.
 
 For example: 
 
 ```bash 
-$ julia test/single-regression.jl c_sw_12x24
+$ julia test/single-regression.jl c_sw_12x24_0
 ```
 
 ## Build and test script
@@ -130,15 +137,15 @@ sh build.sh
 
 
 - `src/` contains the kernel source code
-- `test/` contains the tests, test input, and test output
-- `test/data/outputs` is where test output data is written
+- `test/` contains the test files
+- `test/data/output` is where test output data is written
 - `test/test_input` contains the test input TOML configuration file
 
 ## Troubleshooting
 
 1. All tests fail on my machine.
 
-    Check to make sure git-lfs is installed and that all files in `data/inputs` are NetCDF 
+    Check to make sure git-lfs is installed and that all files in `test/data/inputs` are NetCDF 
     data files and are not text. Run `git lfs pull` to download NetCDF files if necessary.
 
 2. I get `Skipping object checkout, Git LFS is not installed.` when running `git lfs pull`
@@ -149,7 +156,7 @@ sh build.sh
 
     Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
 
-4. I get `git-lfs smudge -- 'data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.
+4. I get `git-lfs smudge -- 'test/data/inputs/c_sw_12x24.nc': git-lfs: command not found` when cloning.
 
     Your version of git does not support git-lfs. Install git-lfs or load a version of git that supports it.
 

@@ -1,5 +1,5 @@
 #=
-      Program module containing the main() function which runs the c_sw kernel
+      Program module containing the main() function which runs the c_sw kernel.
 =#
 
 module program
@@ -29,16 +29,15 @@ export main
     # Define the dataset using NCDatasets pkg from each datafile 
     ds = NCDataset(nc_input_file, "a")
 
-    # Assign Variables from the NetCDF file to a Julia Struct
+    # Assign Variables from the NetCDF file to a ::State Julia Struct
     current_state = State(ds)
-    # different_state = State(different_ds)
 
     # Print input state 
     print_state("Input State - Original", current_state, io)
 
     # Call the Julia kernel
-    println("Num Threads : ", Threads.nthreads())
-    println("Run the kernel $datasize : ")
+    # println("Num Threads : ", Threads.nthreads())
+    println("Run the kernel :  $datasize  , Num Threads : ", Threads.nthreads())
     @time Threads.@threads for k = 1 : current_state.npz
         c_sw!(current_state, k)
     end
