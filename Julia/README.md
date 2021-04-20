@@ -112,7 +112,7 @@ If you'd prefer not to enter the Julia REPL, run:
 $ julia test/test_c_sw.jl
 ```
 
-To run a specific test call julia with the `test/single_regression.jl` file providing the argument of the dataset you'd like to test. The available datasets are contained in the [inputs.TOML](test/test/data/inputs/inputs.toml) file.
+To run a specific test call julia with the `test/single_regression.jl` file providing the argument of the dataset you'd like to test. The available datasets are contained in the [inputs.TOML](test/data/inputsinputs/inputs.toml) file.
 
 For example: 
 
