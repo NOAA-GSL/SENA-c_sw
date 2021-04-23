@@ -1,8 +1,23 @@
 #=
-    sw_core_mod
 
-    The kerenl c_sw calculates the horizontal transport for the set 
-        of variables residing on FV3's C-grid. 
+*                   GNU Lesser General Public License
+*
+* This file is part of the FV3 dynamical core.
+*
+* The FV3 dynamical core is free software: you can redistribute it
+* and/or modify it under the terms of the
+* GNU Lesser General Public License as published by the
+* Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* The FV3 dynamical core is distributed in the hope that it will be
+* useful, but WITHOUT ANYWARRANTY; without even the implied warranty
+* of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with the FV3 dynamical core.
+* If not, see <http://www.gnu.org/licenses/>.
 
 =#
 
@@ -12,7 +27,11 @@ using Printf, NCDatasets, Revise, OffsetArrays, Dates, Parameters, DataStructure
 
 export  print_state, write_state, c_sw!
 
-
+#------------------------------------------------------------------
+# print_state
+#
+# Prints statistics for the kernel state variables
+#------------------------------------------------------------------
 function print_state(message::String, data, io::IOStream)
 
     println(io, "TEST")
@@ -68,6 +87,11 @@ function print_state(message::String, data, io::IOStream)
 
 end # function print_state
 
+#------------------------------------------------------------------
+# print_2d_variable
+#
+# Prints statistics for a 2d state variable
+#------------------------------------------------------------------
 function print_2d_variable(io::IOStream,name::String, data::OffsetArray)
 
     min =     minimum(data)
@@ -82,6 +106,11 @@ function print_2d_variable(io::IOStream,name::String, data::OffsetArray)
 
 end # function print_2d_variable
 
+#------------------------------------------------------------------
+# print_3d_variable
+#
+# Prints statistics for a 3d state variable
+#------------------------------------------------------------------
 function print_3d_variable(io::IOStream, name::String, data::OffsetArray)
 
     min =    minimum(data)
@@ -96,6 +125,11 @@ function print_3d_variable(io::IOStream, name::String, data::OffsetArray)
 
 end # function print_3d_variable
 
+#------------------------------------------------------------------
+# write_state
+#
+# Write state to NetCDF file
+#------------------------------------------------------------------
 # create a NetCDF file from the data in netCDF-4 format
 function write_state(outputfilename::String, data)
 
@@ -212,7 +246,11 @@ function write_state(outputfilename::String, data)
   
 end # function write_state
 
-# Julia version of c_sw subroutine
+#------------------------------------------------------------------
+# c_sw
+#
+# Top-level routine for c_sw kernel
+#------------------------------------------------------------------
 function c_sw!(data, k::Int64)
   
   # Unpack arguments 
@@ -291,10 +329,10 @@ function c_sw!(data, k::Int64)
       end
   end
 
-  # # ----------------
-  # #  Transport delp:
-  # # ----------------
-  # # Xdir:
+  # -----------------
+  #  Transport delp:
+  # -----------------
+  # Xdir:
   fill2_4corners!(delp, pt, 1, sw_corner, se_corner, ne_corner, nw_corner, npx, npy)
   fill_4corners!(w, 1, sw_corner, se_corner, ne_corner, nw_corner, npx, npy)
 
@@ -346,15 +384,15 @@ function c_sw!(data, k::Int64)
       end
   end
 
-  #   !------------
-  #   ! Compute KE:
-  #   !------------
+  # ---------------
+  #  Compute KE:
+  # ---------------
 
-  #   ! Since uc = u*, i.e. the covariant wind perpendicular to the face edge, if
-  #   ! we want to compute kinetic energy we will need the true coordinate-parallel
-  #   ! covariant wind, computed through u = uc*sina + v*cosa.
-  #   !
-  #   ! Use the alpha for the cell KE is being computed in.
+  #  Since uc = u*, i.e. the covariant wind perpendicular to the face edge, if
+  #  we want to compute kinetic energy we will need the true coordinate-parallel
+  #  covariant wind, computed through u = uc*sina + v*cosa.
+  # 
+  #  Use the alpha for the cell KE is being computed in.
   for j = js-1:jep1
       for i = is-1:iep1
           if ua[i, j] > 0.
@@ -405,9 +443,9 @@ function c_sw!(data, k::Int64)
       end
   end
 
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # -------------------------------
   # Compute circulation on C grid
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # -------------------------------
   # To consider using true co - variant winds at face edges?
   for j = js-1:je+1
       for i = is:ie+1
@@ -441,17 +479,17 @@ function c_sw!(data, k::Int64)
       vort[1, npy] = vort[1, npy] + fy[0, npy]
   end
 
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # ------------------------------------------------------------------
   # Compute absolute vorticity
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # ------------------------------------------------------------------
   for j = js:je+1
       for i = is:ie+1
           vort[i, j] = fC[i, j] + rarea_c[i, j] * vort[i, j]
       end
   end
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # ------------------------------
   # Transport absolute vorticity:
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # ------------------------------
   # To go from v to contravariant v at the edges, we divide by sin_sg;
   # but we  must multiply by sin_sg to get the proper flux.
   # These cancel, leaving us with fy1 = dt2 * v at the edges.
@@ -509,7 +547,9 @@ function c_sw!(data, k::Int64)
 
 end # function c_sw
 
-# divergence_corner
+# ------------------------------------------------------------------
+#  divergence_corner
+# ------------------------------------------------------------------
 function divergence_corner!(data, k::Int64)
   
   # unpack arguments
@@ -600,15 +640,15 @@ function divergence_corner!(data, k::Int64)
   return nothing
 end # function divergence_corner
 
-#=
-    d2a2c_vect
-
-      There is a limit to how far this routine can fill uc and vc in the
-      halo, and so either mpp_update_domains or some sort of boundary
-      routine [extrapolation, outflow, interpolation from a nested grid]
-      is needed after c_sw is completed if these variables are needed
-      in the halo
-=#
+# ------------------------------------------------------------------
+# d2a2c_vect
+#
+#  There is a limit to how far this routine can fill uc and vc in the
+#  halo, and so either mpp_update_domains or some sort of boundary
+#  routine [extrapolation, outflow, interpolation from a nested grid]
+#  is needed after c_sw is completed if these variables are needed
+#  in the halo
+# -------------------------------------------------------------------
 function d2a2c_vect!(data, k::Int64)
   
   @unpack sw_corner, se_corner, ne_corner, nw_corner,
@@ -646,9 +686,9 @@ function d2a2c_vect!(data, k::Int64)
   utmp = OffsetArray(fill(1.e8, (indexdim(isd,ied),indexdim(jsd,jed))), isd:ied, jsd:jed)
   vtmp = OffsetArray(fill(1.e8, (indexdim(isd,ied),indexdim(jsd,jed))), isd:ied, jsd:jed)
   
-  # -  -  -  -  -  -  -  -  -  -
+  # -----------------------------
   # Interior:
-  # -  -  -  -  -  -  -  -  -  -
+  # -----------------------------
   for j = max(4, js - 1) : min(npy-4, je+1)
     for i = max(4, isd) : min(npx-4, ied)
       utmp[i, j] = a2 * (u[i, j-1] + u[i, j+2]) + a1 * (u[i, j] + u[i, j+1])
@@ -660,9 +700,9 @@ function d2a2c_vect!(data, k::Int64)
     end
   end
   
-  # -  -  -  -  -  -  -  -  -  -
+  # -----------------------------
   # edges:
-  # -  -  -  -  -  -  -  -  -  -
+  # -----------------------------
   if js == 1 || jsd < 4
     for j = jsd:3
       for i = isd:ied
@@ -707,9 +747,9 @@ function d2a2c_vect!(data, k::Int64)
   end
   
   # A - > C
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # -----------------------------
   # Fix the edges
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -
+  # -----------------------------
   # Xdir:
   if sw_corner
     for i = -2:0
@@ -735,9 +775,9 @@ function d2a2c_vect!(data, k::Int64)
   ifirst = max(3,     is-1)
   ilast  = min(npx-2, ie+2)
   
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - 
+  # ----------------------------------------------------------
   # 4th order interpolation for interior points:
-  # -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - 
+  # -----------------------------------------------------------
   for j = js-1:je+1
     for i = ifirst:ilast
       uc[i, j] = a1 * (utmp[i-1, j] + utmp[i, j]) + a2 * (utmp[i-2, j] + utmp[i+1, j])
@@ -798,9 +838,9 @@ function d2a2c_vect!(data, k::Int64)
     
   end
   
-  # -  -  -  -  -  -
+  # ---------
   # Ydir:
-  # -  -  -  -  -  -
+  # ---------
   if sw_corner
     for j = -2:0
       vtmp[0, j] = -utmp[1-j, 0]
@@ -879,7 +919,9 @@ function d2a2c_vect!(data, k::Int64)
   return nothing
 end # function d2a2c_vect
 
+#------------------------------------------------------------------
 # edge_interpolate4
+#------------------------------------------------------------------
 function edge_interpolate4!(ua, dxa)
   
   u0L = 0.5 * ((2.0 * dxa[2] + dxa[1]) * ua[2] - dxa[2] * ua[1]) / (dxa[1] + dxa[2])
@@ -894,11 +936,11 @@ function edge_interpolate4!(ua, dxa)
   
 end #function edge_interpolate4
 
-#=
- fill2_4corners
-
-    This function fills the 4 corners of the scalar fileds only as needed by c_core
-=#
+#----------------------------------------------------------------------------------
+# fill2_4corners
+#
+#  This function fills the 4 corners of the scalar fields only as needed by c_core
+#----------------------------------------------------------------------------------
 function fill2_4corners!(q1, q2, dir, sw_corner, se_corner, ne_corner, nw_corner, npx, npy)
 
   if dir == 1
@@ -960,11 +1002,11 @@ function fill2_4corners!(q1, q2, dir, sw_corner, se_corner, ne_corner, nw_corner
     return nothing
 end # function fill2_4corners
 
-#=
- fill_4corners
-
-    This routine fill the 4 corners of the scalar fileds only as needed by c_core
-=#
+#----------------------------------------------------------------------------------
+# fill_4corners
+#
+#  This function fills the 4 corners of the scalar fields only as needed by c_core
+#----------------------------------------------------------------------------------
 function fill_4corners!(q, dir, sw_corner, se_corner, ne_corner, nw_corner, npx, npy)
 
   if dir == 1
