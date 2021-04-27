@@ -2,7 +2,7 @@ using OffsetArrays, NCDatasets, Parameters
 
 # Define the contents of the State Struct 
 # The Parameters.jl @with_kw "macro" gives the ability to "unpack" variables when this struct is passed as an argument to functions
-@with_kw struct State{T, S}
+@with_kw mutable struct State{T, S}
     isd        ::Int32
     ied        ::Int32
     jsd        ::Int32

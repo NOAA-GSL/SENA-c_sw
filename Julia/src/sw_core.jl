@@ -23,9 +23,13 @@
 
 module sw_core_mod
 
+include("./interpolate.jl")
+
 using Printf, NCDatasets, Revise, OffsetArrays, Dates, Parameters, DataStructures
 
-export  print_state, write_state, c_sw!
+using .interpolate
+
+export print_state, write_state, c_sw!, interpolate_state!
 
 #------------------------------------------------------------------
 # print_state
@@ -133,10 +137,10 @@ end # function print_3d_variable
 # create a NetCDF file from the data in netCDF-4 format
 function write_state(outputfilename::String, data)
 
-    date = Dates.now()
-    dateString = Dates.format(date, "yyyy-mm-dd HH:MM:SS")
+  date = Dates.now()
+  dateString = Dates.format(date, "yyyy-mm-dd HH:MM:SS")
 
-    ds = NCDataset(outputfilename, "c" ; format=:netcdf4, attrib=OrderedDict(
+  ds = NCDataset(outputfilename, "c" ; format=:netcdf4, attrib=OrderedDict(
     "creation_date"             => dateString,
     "kernel_name"               => "c_sw",
     "isd"                       => data.isd,
@@ -157,93 +161,93 @@ function write_state(outputfilename::String, data)
     "nw_corner"                 => data.nw_corner,
     "ne_corner"                 => data.ne_corner,
   ))
-  
+
   # define Dimensions
-    ds.dim["ni"] =    data.ni
-    ds.dim["nj"] =    data.nj
-    ds.dim["nip1"] =  data.nip1
-    ds.dim["njp1"] =  data.njp1
-    ds.dim["nk"] =    data.nk
-    ds.dim["nk9"] =   data.nk9
-  
+  defDim(ds, "ni", data.ni)
+  defDim(ds, "nj", data.nj)
+  defDim(ds, "nip1", data.nip1)
+  defDim(ds, "njp1", data.njp1)
+  defDim(ds, "nk", data.nk)
+  defDim(ds, "nk9", data.nk9)
+
   # Declare variables
-    ncrarea =           defVar(ds, "rarea", Float64, ("ni", "nj"))
-    ncrarea_c =         defVar(ds, "rarea_c", Float64, ("nip1", "njp1"))
-    ncsin_sg =          defVar(ds, "sin_sg", Float64, ("ni", "nj", "nk9"))
-    nccos_sg =          defVar(ds, "cos_sg", Float64, ("ni", "nj", "nk9"))
-    ncsina_v =          defVar(ds, "sina_v", Float64, ("ni", "njp1"))
-    nccosa_v =          defVar(ds, "cosa_v", Float64, ("ni", "njp1"))
-    ncsina_u =          defVar(ds, "sina_u", Float64, ("nip1", "nj"))
-    nccosa_u =          defVar(ds, "cosa_u", Float64, ("nip1", "nj"))
-    ncfC =              defVar(ds, "fC", Float64, ("nip1", "njp1"))
-    ncrdxc =            defVar(ds, "rdxc", Float64, ("nip1", "nj"))
-    ncrdyc =            defVar(ds, "rdyc", Float64, ("ni", "njp1"))
-    ncdx =              defVar(ds, "dx", Float64, ("ni", "njp1"))
-    ncdy =              defVar(ds, "dy", Float64, ("nip1", "nj"))
-    ncdxc =             defVar(ds, "dxc", Float64, ("nip1", "nj"))
-    ncdyc =             defVar(ds, "dyc", Float64, ("ni", "njp1"))
-    nccosa_s =          defVar(ds, "cosa_s", Float64, ("ni", "nj"))
-    ncrsin_u =          defVar(ds, "rsin_u", Float64, ("nip1", "nj"))
-    ncrsin_v =          defVar(ds, "rsin_v", Float64, ("ni", "njp1"))
-    ncrsin2 =           defVar(ds, "rsin2", Float64, ("ni", "nj"))
-    ncdxa =             defVar(ds, "dxa", Float64, ("ni", "nj"))
-    ncdya =             defVar(ds, "dya", Float64, ("ni", "nj"))
-    ncdelp =            defVar(ds, "delp", Float64, ("ni", "nj", "nk"))
-    ncdelpc =           defVar(ds, "delpc", Float64, ("ni", "nj", "nk"))
-    ncpt =              defVar(ds, "pt", Float64, ("ni", "nj", "nk"))
-    ncptc =             defVar(ds, "ptc", Float64, ("ni", "nj", "nk"))
-    ncu =               defVar(ds, "u", Float64, ("ni", "njp1", "nk"))
-    ncv =               defVar(ds, "v", Float64, ("nip1", "nj", "nk"))
-    ncw =               defVar(ds, "w", Float64, ("ni", "nj", "nk"))
-    ncuc =              defVar(ds, "uc", Float64, ("nip1", "nj", "nk"))
-    ncvc =              defVar(ds, "vc", Float64, ("ni", "njp1", "nk"))
-    ncua =              defVar(ds, "ua", Float64, ("ni", "nj", "nk"))
-    ncva =              defVar(ds, "va", Float64, ("ni", "nj", "nk"))
-    ncwc =              defVar(ds, "wc", Float64, ("ni", "nj", "nk"))
-    ncut =              defVar(ds, "ut", Float64, ("ni", "nj", "nk"))
-    ncvt =              defVar(ds, "vt", Float64, ("ni", "nj", "nk"))
-    ncdivg_d =          defVar(ds, "divg_d", Float64, ("nip1", "njp1", "nk"))
-  
+  ncrarea =           defVar(ds, "rarea", Float64, ("ni", "nj"))
+  ncrarea_c =         defVar(ds, "rarea_c", Float64, ("nip1", "njp1"))
+  ncsin_sg =          defVar(ds, "sin_sg", Float64, ("ni", "nj", "nk9"))
+  nccos_sg =          defVar(ds, "cos_sg", Float64, ("ni", "nj", "nk9"))
+  ncsina_v =          defVar(ds, "sina_v", Float64, ("ni", "njp1"))
+  nccosa_v =          defVar(ds, "cosa_v", Float64, ("ni", "njp1"))
+  ncsina_u =          defVar(ds, "sina_u", Float64, ("nip1", "nj"))
+  nccosa_u =          defVar(ds, "cosa_u", Float64, ("nip1", "nj"))
+  ncfC =              defVar(ds, "fC", Float64, ("nip1", "njp1"))
+  ncrdxc =            defVar(ds, "rdxc", Float64, ("nip1", "nj"))
+  ncrdyc =            defVar(ds, "rdyc", Float64, ("ni", "njp1"))
+  ncdx =              defVar(ds, "dx", Float64, ("ni", "njp1"))
+  ncdy =              defVar(ds, "dy", Float64, ("nip1", "nj"))
+  ncdxc =             defVar(ds, "dxc", Float64, ("nip1", "nj"))
+  ncdyc =             defVar(ds, "dyc", Float64, ("ni", "njp1"))
+  nccosa_s =          defVar(ds, "cosa_s", Float64, ("ni", "nj"))
+  ncrsin_u =          defVar(ds, "rsin_u", Float64, ("nip1", "nj"))
+  ncrsin_v =          defVar(ds, "rsin_v", Float64, ("ni", "njp1"))
+  ncrsin2 =           defVar(ds, "rsin2", Float64, ("ni", "nj"))
+  ncdxa =             defVar(ds, "dxa", Float64, ("ni", "nj"))
+  ncdya =             defVar(ds, "dya", Float64, ("ni", "nj"))
+  ncdelp =            defVar(ds, "delp", Float64, ("ni", "nj", "nk"))
+  ncdelpc =           defVar(ds, "delpc", Float64, ("ni", "nj", "nk"))
+  ncpt =              defVar(ds, "pt", Float64, ("ni", "nj", "nk"))
+  ncptc =             defVar(ds, "ptc", Float64, ("ni", "nj", "nk"))
+  ncu =               defVar(ds, "u", Float64, ("ni", "njp1", "nk"))
+  ncv =               defVar(ds, "v", Float64, ("nip1", "nj", "nk"))
+  ncw =               defVar(ds, "w", Float64, ("ni", "nj", "nk"))
+  ncuc =              defVar(ds, "uc", Float64, ("nip1", "nj", "nk"))
+  ncvc =              defVar(ds, "vc", Float64, ("ni", "njp1", "nk"))
+  ncua =              defVar(ds, "ua", Float64, ("ni", "nj", "nk"))
+  ncva =              defVar(ds, "va", Float64, ("ni", "nj", "nk"))
+  ncwc =              defVar(ds, "wc", Float64, ("ni", "nj", "nk"))
+  ncut =              defVar(ds, "ut", Float64, ("ni", "nj", "nk"))
+  ncvt =              defVar(ds, "vt", Float64, ("ni", "nj", "nk"))
+  ncdivg_d =          defVar(ds, "divg_d", Float64, ("nip1", "njp1", "nk"))
+
   # Define variables
-    ncrarea[:] =   data.rarea
-    ncrarea_c[:] = data.rarea_c
-    ncsin_sg[:] =  data.sin_sg
-    nccos_sg[:] =  data.cos_sg
-    ncsina_v[:] =  data.sina_v
-    nccosa_v[:] =  data.cosa_v
-    ncsina_u[:] =  data.sina_u
-    nccosa_u[:] =  data.cosa_u
-    ncfC[:] =      data.fC
-    ncrdxc[:] =    data.rdxc
-    ncrdyc[:] =    data.rdyc
-    ncdx[:] =      data.dx
-    ncdy[:] =      data.dy
-    ncdxc[:] =     data.dxc
-    ncdyc[:] =     data.dyc
-    nccosa_s[:] =  data.cosa_s
-    ncrsin_u[:] =  data.rsin_u
-    ncrsin_v[:] =  data.rsin_v
-    ncrsin2[:] =   data.rsin2
-    ncdxa[:] =     data.dxa
-    ncdya[:] =     data.dya
-    ncdelp[:] =    data.delp
-    ncdelpc[:] =   data.delpc
-    ncpt[:] =      data.pt
-    ncptc[:] =     data.ptc
-    ncu[:] =       data.u
-    ncv[:] =       data.v
-    ncw[:] =       data.w
-    ncuc[:] =      data.uc
-    ncvc[:] =      data.vc
-    ncua[:] =      data.ua
-    ncva[:] =      data.va
-    ncwc[:] =      data.wc
-    ncut[:] =      data.ut
-    ncvt[:] =      data.vt
-    ncdivg_d[:] =  data.divg_d
-  
-    close(ds)
-  
+  ncrarea[:,:] =    data.rarea
+  ncrarea_c[:,:] =  data.rarea_c
+  ncsin_sg[:,:,:] = data.sin_sg
+  nccos_sg[:,:,:] = data.cos_sg
+  ncsina_v[:,:] =   data.sina_v
+  nccosa_v[:,:] =   data.cosa_v
+  ncsina_u[:,:] =   data.sina_u
+  nccosa_u[:,:] =   data.cosa_u
+  ncfC[:,:] =       data.fC
+  ncrdxc[:,:] =     data.rdxc
+  ncrdyc[:,:] =     data.rdyc
+  ncdx[:,:] =       data.dx
+  ncdy[:,:] =       data.dy
+  ncdxc[:,:] =      data.dxc
+  ncdyc[:,:] =      data.dyc
+  nccosa_s[:,:] =   data.cosa_s
+  ncrsin_u[:,:] =   data.rsin_u
+  ncrsin_v[:,:] =   data.rsin_v
+  ncrsin2[:,:] =    data.rsin2
+  ncdxa[:,:] =      data.dxa
+  ncdya[:,:] =      data.dya
+  ncdelp[:,:,:] =   data.delp
+  ncdelpc[:,:,:] =  data.delpc
+  ncpt[:,:,:] =     data.pt
+  ncptc[:,:,:] =    data.ptc
+  ncu[:,:,:] =      data.u
+  ncv[:,:,:] =      data.v
+  ncw[:,:,:] =      data.w
+  ncuc[:,:,:] =     data.uc
+  ncvc[:,:,:] =     data.vc
+  ncua[:,:,:] =     data.ua
+  ncva[:,:,:] =     data.va
+  ncwc[:,:,:] =     data.wc
+  ncut[:,:,:] =     data.ut
+  ncvt[:,:,:] =     data.vt
+  ncdivg_d[:,:,:] = data.divg_d
+
+  close(ds)
+
 end # function write_state
 
 #------------------------------------------------------------------
@@ -286,14 +290,23 @@ function c_sw!(data, k::Int64)
   indexdim(a, b) = b - a + 1
 
   # define local variables arrays and index them 
-  vort = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+1)), is-1:ie+1, js-1:je+1)
-  ke   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+1)), is-1:ie+1, js-1:je+1)
-  fx   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
-  fx1  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
-  fx2  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
-  fy   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
-  fy1  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
-  fy2  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
+  # vort = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+1)), is-1:ie+1, js-1:je+1)
+  # ke   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+1)), is-1:ie+1, js-1:je+1)
+  # fx   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
+  # fx1  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
+  # fx2  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
+  # fy   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
+  # fy1  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
+  # fy2  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
+
+  vort = OffsetArray{Float64, 2}(undef, is-1:ie+1, js-1:je+1)
+  ke   = OffsetArray{Float64, 2}(undef, is-1:ie+1, js-1:je+1)
+  fx   = OffsetArray{Float64, 2}(undef, is-1:ie+2, js-1:je+1)
+  fx1  = OffsetArray{Float64, 2}(undef, is-1:ie+2, js-1:je+1)
+  fx2  = OffsetArray{Float64, 2}(undef, is-1:ie+2, js-1:je+1)
+  fy   = OffsetArray{Float64, 2}(undef, is-1:ie+1, js-1:je+2)
+  fy1  = OffsetArray{Float64, 2}(undef, is-1:ie+1, js-1:je+2)
+  fy2  = OffsetArray{Float64, 2}(undef, is-1:ie+1, js-1:je+2)
 
   # Convert corners from Int32 to Bool for Julia conditional statements
   sw_corner = !iszero(sw_corner)
@@ -1047,5 +1060,253 @@ function fill_4corners!(q, dir, sw_corner, se_corner, ne_corner, nw_corner, npx,
   end
   return nothing
 end #function fill_4corners
+
+#----------------------------------------------------------------------------------
+# interpolate_state
+#
+#  Increase the database by interpFactor.
+#----------------------------------------------------------------------------------
+function interpolate_state!(original_state, interpFactor::Int64)
+
+  @unpack rarea, rarea_c, sin_sg, cos_sg, sina_v, cosa_v,
+  sina_u, cosa_u, fC, rdxc, rdyc, dx, dy, dxc, dyc,
+  cosa_s, rsin_u, rsin_v, rsin2, dxa, dya,
+  delpc, delp, ptc, pt, u, v, w, uc, vc, ua, va, wc, ut,
+  vt, divg_d  = original_state
+
+  @unpack isd, ied, jsd, jed, is, ie, js, je, nord, npx, npy, npz = original_state
+
+  odims = Array{Int64}(undef, 6)
+  idims = Array{Int64}(undef, 6)
+
+  odims[1] = isd
+  odims[2] = ied
+  odims[3] = jsd
+  odims[4] = jed
+
+  interpolateCalculateSpace2D!(odims, interpFactor, idims)
+
+  new_rsin2 = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(rsin2, odims, new_rsin2, idims, interpFactor)
+  new_dxa = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(dxa, odims, new_dxa, idims, interpFactor)
+  new_dya = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(dya, odims, new_dya, idims, interpFactor)
+  new_cosa_s = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(cosa_s, odims, new_cosa_s, idims, interpFactor)
+  new_rarea = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(rarea, odims, new_rarea, idims, interpFactor)
+
+  new_ied = idims[2] # Beginning subscripts are unchanged.
+  new_jed = idims[4] # No changes to the 3rd dimension.
+
+  odims[1] = isd
+  odims[2] = ied
+  odims[3] = jsd
+  odims[4] = jed + 1
+
+  interpolateCalculateSpace2D!(odims, interpFactor, idims)
+
+  new_sina_v = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(sina_v, odims, new_sina_v, idims, interpFactor)
+  new_cosa_v = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(cosa_v, odims, new_cosa_v, idims, interpFactor)
+  new_rsin_v = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(rsin_v, odims, new_rsin_v, idims, interpFactor)
+  new_rdyc = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(rdyc, odims, new_rdyc, idims, interpFactor)
+  new_dx = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(dx, odims, new_dx, idims, interpFactor)
+  new_dyc = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(dyc, odims, new_dyc, idims, interpFactor)
+
+  odims[1] = isd
+  odims[2] = ied + 1
+  odims[3] = jsd
+  odims[4] = jed
+
+  interpolateCalculateSpace2D!(odims, interpFactor, idims)
+
+  new_sina_u = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(sina_u, odims, new_sina_u, idims, interpFactor)
+  new_cosa_u = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(cosa_u, odims, new_cosa_u, idims, interpFactor)
+  new_rdxc = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(rdxc, odims, new_rdxc, idims, interpFactor)
+  new_dy = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(dy, odims, new_dy, idims, interpFactor)
+  new_dxc = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(dxc, odims, new_dxc, idims, interpFactor)
+  new_rsin_u = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(rsin_u, odims, new_rsin_u, idims, interpFactor)
+
+  odims[1] = isd
+  odims[2] = ied + 1
+  odims[3] = jsd
+  odims[4] = jed + 1
+
+  interpolateCalculateSpace2D!(odims, interpFactor, idims)
+
+  new_rarea_c = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(rarea_c, odims, new_rarea_c, idims, interpFactor)
+  new_fC = OffsetArray{Float64, 2}(undef, idims[1]:idims[2], idims[3]:idims[4])
+  interpolateArray2D!(fC, odims, new_fC, idims, interpFactor)
+
+  odims[1] = isd
+  odims[2] = ied
+  odims[3] = jsd
+  odims[4] = jed
+  odims[5] = 1
+  odims[6] = 9
+
+  interpolateCalculateSpace3D!(odims, interpFactor, idims)
+
+  new_sin_sg = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(sin_sg, odims, new_sin_sg, idims, interpFactor)
+  new_cos_sg = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(cos_sg, odims, new_cos_sg, idims, interpFactor)
+
+  odims[1] = isd
+  odims[2] = ied
+  odims[3] = jsd
+  odims[4] = jed
+  odims[5] = 1
+  odims[6] = npz
+
+  interpolateCalculateSpace3D!(odims, interpFactor, idims)
+
+  new_delpc = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(delpc, odims, new_delpc, idims, interpFactor)
+  new_delp = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(delp, odims, new_delp, idims, interpFactor)
+  new_ptc = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(ptc, odims, new_ptc, idims, interpFactor)
+  new_pt = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(pt, odims, new_pt, idims, interpFactor)
+  new_w = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(w, odims, new_w, idims, interpFactor)
+  new_ua = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(ua, odims, new_ua, idims, interpFactor)
+  new_va = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(va, odims, new_va, idims, interpFactor)
+  new_wc = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(wc, odims, new_wc, idims, interpFactor)
+  new_ut = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(ut, odims, new_ut, idims, interpFactor)
+  new_vt = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(vt, odims, new_vt, idims, interpFactor)
+
+  odims[1] = isd
+  odims[2] = ied + 1
+  odims[3] = jsd
+  odims[4] = jed
+  odims[5] = 1
+  odims[6] = npz
+
+  interpolateCalculateSpace3D!(odims, interpFactor, idims)
+
+  new_v = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(v, odims, new_v, idims, interpFactor)
+  new_uc = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(uc, odims, new_uc, idims, interpFactor)
+
+  odims[1] = isd
+  odims[2] = ied
+  odims[3] = jsd
+  odims[4] = jed + 1
+  odims[5] = 1
+  odims[6] = npz
+
+  interpolateCalculateSpace3D!(odims, interpFactor, idims)
+
+  new_u = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(u, odims, new_u, idims, interpFactor)
+  new_vc = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(vc, odims, new_vc, idims, interpFactor)
+  
+  odims[1] = isd
+  odims[2] = ied + 1
+  odims[3] = jsd
+  odims[4] = jed + 1
+  odims[5] = 1
+  odims[6] = npz
+
+  interpolateCalculateSpace3D!(odims, interpFactor, idims)
+
+  new_divg_d = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
+  interpolateArray3D!(divg_d, odims, new_divg_d, idims, interpFactor)
+
+  # Exchange the old dimensions to the new dimensions.
+  ied = new_ied
+  jed = new_jed
+  is = 1
+  ie = new_ied - 3
+  js = 1
+  je = new_jed - 3
+  nord = 1
+  npx = ie + 1
+  npy = je + 1
+  npz = 127
+
+  # Redefine the dimensions in original_state Struct
+  setfield!(original_state, :ied,  Int32(new_ied))
+  setfield!(original_state, :jed,  Int32(new_jed))
+  setfield!(original_state, :is,   Int32(1))
+  setfield!(original_state, :ie,   Int32(new_ied - 3))
+  setfield!(original_state, :js,   Int32(1))
+  setfield!(original_state, :je,   Int32(new_jed - 3))
+  setfield!(original_state, :nord, Int32(1))
+  setfield!(original_state, :npx,  Int32(ie +1))
+  setfield!(original_state, :npy,  Int32(je + 1))
+  setfield!(original_state, :npz,  Int32(127))
+
+  # Redefine the NetCDF dimensions in original_state Struct
+  setfield!(original_state, :ni,   abs(isd - ied - 1))
+  setfield!(original_state, :nj,   abs(jsd - jed - 1))
+  setfield!(original_state, :nip1, abs(isd - ied - 2))
+  setfield!(original_state, :njp1, abs(jsd - jed - 2))
+
+  # Reassign the newly dimensioned and interpolated variables as OffsetArrays which slice off the elements past ied + 1 & jed +1, and are negatively indexed
+  setfield!(original_state, :rarea , OffsetArray(new_rarea[  isd : ied   , jsd: jed      ],  isd : ied   , jsd: jed      ))
+  setfield!(original_state, :rarea_c,OffsetArray(new_rarea_c[isd : ied+1 , jsd: jed+1    ],  isd : ied+1 , jsd: jed+1    ))
+  setfield!(original_state, :sin_sg, OffsetArray(new_sin_sg[ isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :cos_sg, OffsetArray(new_cos_sg[ isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :sina_v, OffsetArray(new_sina_v[ isd : ied   , jsd: jed+1    ],  isd : ied   , jsd: jed+1    ))
+  setfield!(original_state, :cosa_v, OffsetArray(new_cosa_v[ isd : ied   , jsd: jed+1    ],  isd : ied   , jsd: jed+1    ))
+  setfield!(original_state, :sina_u, OffsetArray(new_sina_u[ isd : ied+1 , jsd: jed      ],  isd : ied+1 , jsd: jed      ))
+  setfield!(original_state, :cosa_u, OffsetArray(new_cosa_u[ isd : ied+1 , jsd: jed      ],  isd : ied+1 , jsd: jed      ))
+  setfield!(original_state, :fC    , OffsetArray(new_fC[     isd : ied+1 , jsd: jed+1    ],  isd : ied+1 , jsd: jed+1    ))
+  setfield!(original_state, :rdxc  , OffsetArray(new_rdxc[   isd : ied+1 , jsd: jed      ],  isd : ied+1 , jsd: jed      ))
+  setfield!(original_state, :rdyc  , OffsetArray(new_rdyc[   isd : ied   , jsd: jed+1    ],  isd : ied   , jsd: jed+1    ))
+  setfield!(original_state, :dx    , OffsetArray(new_dx[     isd : ied   , jsd: jed+1    ],  isd : ied   , jsd: jed+1    ))
+  setfield!(original_state, :dy    , OffsetArray(new_dy[     isd : ied+1 , jsd: jed      ],  isd : ied+1 , jsd: jed      ))
+  setfield!(original_state, :dxc   , OffsetArray(new_dxc[    isd : ied+1 , jsd: jed      ],  isd : ied+1 , jsd: jed      ))
+  setfield!(original_state, :dyc   , OffsetArray(new_dyc[    isd : ied   , jsd: jed+1    ],  isd : ied   , jsd: jed+1    ))
+  setfield!(original_state, :cosa_s, OffsetArray(new_cosa_s[ isd : ied   , jsd: jed      ],  isd : ied   , jsd: jed      ))
+  setfield!(original_state, :rsin_u, OffsetArray(new_rsin_u[ isd : ied+1 , jsd: jed      ],  isd : ied+1 , jsd: jed      ))
+  setfield!(original_state, :rsin_v, OffsetArray(new_rsin_v[ isd : ied   , jsd: jed+1    ],  isd : ied   , jsd: jed+1    ))
+  setfield!(original_state, :rsin2 , OffsetArray(new_rsin2[  isd : ied   , jsd: jed      ],  isd : ied   , jsd: jed      ))
+  setfield!(original_state, :dxa   , OffsetArray(new_dxa[    isd : ied   , jsd: jed      ],  isd : ied   , jsd: jed      ))
+  setfield!(original_state, :dya   , OffsetArray(new_dya[    isd : ied   , jsd: jed      ],  isd : ied   , jsd: jed      ))
+  setfield!(original_state, :delpc , OffsetArray(new_delpc[  isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :delp  , OffsetArray(new_delp[   isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :ptc   , OffsetArray(new_ptc[    isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :pt    , OffsetArray(new_pt[     isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :u     , OffsetArray(new_u[      isd : ied   , jsd: jed+1, : ],  isd : ied   , jsd: jed+1, : ))
+  setfield!(original_state, :v     , OffsetArray(new_v[      isd : ied+1 , jsd: jed  , : ],  isd : ied+1 , jsd: jed  , : ))
+  setfield!(original_state, :w     , OffsetArray(new_w[      isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :uc    , OffsetArray(new_uc[     isd : ied+1 , jsd: jed  , : ],  isd : ied+1 , jsd: jed  , : ))
+  setfield!(original_state, :ua    , OffsetArray(new_ua[     isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :vc    , OffsetArray(new_vc[     isd : ied   , jsd: jed+1, : ],  isd : ied   , jsd: jed+1, : ))
+  setfield!(original_state, :va    , OffsetArray(new_va[     isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :wc    , OffsetArray(new_wc[     isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :ut    , OffsetArray(new_ut[     isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :vt    , OffsetArray(new_vt[     isd : ied   , jsd: jed  , : ],  isd : ied   , jsd: jed  , : ))
+  setfield!(original_state, :divg_d, OffsetArray(new_divg_d[ isd : ied+1 , jsd: jed+1, : ],  isd : ied+1 , jsd: jed+1, : ))
+
+  return nothing
+
+end #function interpolate_state
+
 
 end # module sw_core_mod

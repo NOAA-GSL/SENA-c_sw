@@ -5,7 +5,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_12x24.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_12x24_0.nc"
+  output_file = "../test/data/outputs/c_sw_12x24_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_12x24_0.test.out"
   interpFactor = 0
@@ -15,7 +15,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_12x24.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_12x24_3.nc"
+  output_file = "../test/data/outputs/c_sw_12x24_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_12x24_3.test.out"
   interpFactor = 3
@@ -25,7 +25,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_24x24.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_24x24_0.nc"
+  output_file = "../test/data/outputs/c_sw_24x24_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_24x24_0.test.out"
   interpFactor = 0
@@ -35,7 +35,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_24x24.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_24x24_3.nc"
+  output_file = "../test/data/outputs/c_sw_24x24_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_24x24_3.test.out"
   interpFactor = 3
@@ -45,7 +45,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_48x24.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_48x24_0.nc"
+  output_file = "../test/data/outputs/c_sw_48x24_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x24_0.test.out"
   interpFactor = 0
@@ -55,7 +55,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_48x24.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_48x24_3.nc"
+  output_file = "../test/data/outputs/c_sw_48x24_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x24_3.test.out"
   interpFactor = 3
@@ -65,7 +65,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_48x48.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_48x48_0.nc"
+  output_file = "../test/data/outputs/c_sw_48x48_0.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x48_0.test.out"
   interpFactor = 0
@@ -75,7 +75,7 @@
   input_data_dir = "test/data/inputs"
   input_file = "../test/data/inputs/c_sw_48x48.nc"
   output_data_dir = "Julia/test/data/outputs"
-  output_file = "test/data/outputs/c_sw_48x48_3.nc"
+  output_file = "../test/data/outputs/c_sw_48x48_3.nc"
   log_dir = "test_output"
   test_out_file = "test/test_output/c_sw_48x48_3.test.out"
   interpFactor = 3

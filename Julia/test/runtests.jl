@@ -9,6 +9,9 @@ using Test
     # Integration test
     include("test_c_sw.jl")
     
+    #Interpolation test
+    include("interpolate_test.jl")
+    
     # Unit tests (in progress)
     # include("unit_tests.jl")
 
