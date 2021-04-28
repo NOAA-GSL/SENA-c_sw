@@ -3,7 +3,7 @@
 dataset = string(ARGS[1])
 
 
-include("../src/c_sw.jl")
+include("../src/Csw.jl")
 
 using Test, TOML, .program
 

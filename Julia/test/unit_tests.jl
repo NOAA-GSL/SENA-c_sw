@@ -1,10 +1,10 @@
 
-# Unit Tests of functions within src/sw_core.jl
+# Unit Tests of functions within src/SwCore.jl
 
-using FV3Kernels, NCDatasets, Test
+using NCDatasets, Test
 
-include("../src/sw_core.jl")
-include("../src/c_sw.jl")
+include("../src/SwCore.jl")
+include("../src/Csw.jl")
 
 using .sw_core_mod, .program
 

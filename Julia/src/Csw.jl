@@ -1,39 +1,38 @@
 #=
-      Program module containing the main() function which runs the c_sw kernel.
+    Top level program containing the function main which runs the c_sw kernel.
 =#
 
 module program
 
-include("./sw_core.jl")
+include("./SwCore.jl")
 include("./states.jl")
 
 using TOML, Printf
 using NCDatasets, OffsetArrays
-using .sw_core_mod
+using .SwCoreModule
 
 
 export main
 
-
     function main(input::Dict)
 
-    # define vars
+    # Input configuration variables
     datasize = input["name"]
     nc_input_file = input["input_file"]
     print_output_file = input["test_out_file"]
     nc_output_file = input["output_file"]
     interpFactor = input["interpFactor"]
 
-    # Open the export file with write/create/truncate privileges ("w")
+    # Open the statistics log file
     io = open(print_output_file,"w")
 
-    # Define the dataset using NCDatasets pkg from each datafile 
+    # Define the dataset using NCDatasets pkg for each datafile 
     ds = NCDataset(nc_input_file, "a")
 
     # Assign Variables from the NetCDF file to a ::State Julia Struct
     current_state = State(ds)
 
-    # Print input state 
+    # Print the input state statistics to the log file
     print_state("Input State - Original", current_state, io)
 
     # Interpolate the data according to the interpolation factor.
@@ -47,20 +46,20 @@ export main
       println("Error, InterpFactor less than zero.")
     end
 
-    # Call the Julia kernel
+    # Run the kernel
     println("Run the kernel :  $datasize  , Num Threads : ", Threads.nthreads())
     @time Threads.@threads for k = 1 : current_state.npz
         c_sw!(current_state, k)
     end
 
-    # Print output state 
+    # Print the output state statistics to the log file
     print_state("Output State", current_state, io)
 
     # Write a new NetCDF file
     println("Write NetCDF file $datasize : ") 
     @time write_state(nc_output_file, current_state)
 
-    # Close the IO file
+    # Close the statistics log file
     close(io)
 
     return true

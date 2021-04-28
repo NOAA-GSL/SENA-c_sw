@@ -57,12 +57,6 @@ in that directory for details about how to run and test it.
 Contains the source tree for the Julia implementation. See the README
 in that directory for details about how to run and test it.
 
-### `foo/`
-
-Alternative implementations will be stored in a new top-level subdirectory
-along side the reference implementation. In this documentation, `foo/` is
-simply a place holder for names given to future implementations.
-
 # Contributing
 
 Please see the [Contributing Guide](CONTRIBUTING.md) for information about contributing to this repository.

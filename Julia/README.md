@@ -6,8 +6,7 @@ for more information.
 
 This is the [Julia](https://github.com/JuliaLang/julia) implementation of the `c_sw` kernel extracted from the FV3 model.  The number of threads is determined by
 the `JULIA_NUM_THREADS` environment variable, which defaults to 1.  Currently the number of threads is hard-coded to 4 in
-the build script, but users can customize it at runtime for other
-runs.
+the build script, but users can customize it at runtime for other runs.
 
 ## Dependencies
 The following packages are required for building and running this kernel:
@@ -30,15 +29,15 @@ Some systems that use modules to manage software provide git with git-lfs suppor
 module (e.g. `module load git`).  If you are using a system that uses modules, use
 `module avail` to look for alternative versions of git that may have git-lfs support.
 
-Make sure the files in `test/data/inputs` are NetCDF data files (not text) before proceeding to
+Make sure the files in `../test/data/inputs` are NetCDF data files (not text) before proceeding to
 the build step. A simple way to do that is with the file command as shown below:
 
 ```
 $ file test/data/inputs/*
-test/data/inputs/c_sw_12x24.nc: NetCDF Data Format data
-test/data/inputs/c_sw_24x24.nc: NetCDF Data Format data
-test/data/inputs/c_sw_48x24.nc: NetCDF Data Format data
-test/data/inputs/c_sw_48x48.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_12x24.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_24x24.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_48x24.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_48x48.nc: NetCDF Data Format data
 ```
 
 **NOTE**: If you cloned the repository with a version of git without git-lfs installed, or before you ran `git lfs install`, you
@@ -98,7 +97,7 @@ Two additional steps are required to create the test output directories before t
 
 ```bash
 $ julia --project=. -e 'mkdir("test/test_output")'
-$ julia --project=. -e 'mkpath("test/data/outputs")'
+$ julia --project=. -e 'mkpath("../test/data/outputs")'
 ```
 
 From the Julia REPL: 
@@ -117,7 +116,7 @@ To run a specific test call julia with the `test/single_regression.jl` file prov
 For example: 
 
 ```bash 
-$ julia test/single-regression.jl c_sw_12x24_0
+$ julia test/single_regression.jl "c_sw_12x24_0"
 ```
 
 ## Build and test script
@@ -138,8 +137,8 @@ sh build.sh
 
 - `src/` contains the kernel source code
 - `test/` contains the test files
-- `test/data/output` is where test output data is written
 - `test/test_input` contains the test input TOML configuration file
+- `../test/data/output` is where test output data is written
 
 ## Troubleshooting
 

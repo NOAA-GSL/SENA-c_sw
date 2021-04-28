@@ -11,7 +11,7 @@ using Test
     
     #Interpolation test
     include("interpolate_test.jl")
-    
+
     # Unit tests (in progress)
     # include("unit_tests.jl")
 

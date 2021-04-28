@@ -3,7 +3,7 @@
 =#
 
 # include source file of the driver program
-include("../src/c_sw.jl")
+include("../src/Csw.jl")
 
 using Test, TOML, .program
 

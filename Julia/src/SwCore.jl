@@ -21,13 +21,13 @@
 
 =#
 
-module sw_core_mod
+module SwCoreModule
 
-include("./interpolate.jl")
+include("./Interpolate.jl")
 
 using Printf, NCDatasets, Revise, OffsetArrays, Dates, Parameters, DataStructures
 
-using .interpolate
+using .Interpolate
 
 export print_state, write_state, c_sw!, interpolate_state!
 
@@ -267,7 +267,7 @@ function c_sw!(data, k::Int64)
 
   # Unpack local variables
   @unpack isd, ied, jsd, jed, is, ie, js, je, 
-          nord, npx, npy, npz, dt2, ni, nj, nip1, njp1, nk, nk9  = data
+          nord, npx, npy, npz, dt2 = data
 
   # re-dimension variables to the first two dimensions 
   delpc =        @view delpc[:,:,k]
@@ -290,15 +290,6 @@ function c_sw!(data, k::Int64)
   indexdim(a, b) = b - a + 1
 
   # define local variables arrays and index them 
-  # vort = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+1)), is-1:ie+1, js-1:je+1)
-  # ke   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+1)), is-1:ie+1, js-1:je+1)
-  # fx   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
-  # fx1  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
-  # fx2  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+2) , indexdim(js-1, je+1)), is-1:ie+2, js-1:je+1)
-  # fy   = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
-  # fy1  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
-  # fy2  = OffsetArray(Array{Float64, 2}(undef, indexdim(is-1,ie+1) , indexdim(js-1, je+2)), is-1:ie+1, js-1:je+2)
-
   vort = OffsetArray{Float64, 2}(undef, is-1:ie+1, js-1:je+1)
   ke   = OffsetArray{Float64, 2}(undef, is-1:ie+1, js-1:je+1)
   fx   = OffsetArray{Float64, 2}(undef, is-1:ie+2, js-1:je+1)
@@ -366,7 +357,7 @@ function c_sw!(data, k::Int64)
       end
   end
 
-  # # Ydir:
+  # Ydir:
   fill2_4corners!(delp, pt, 2, sw_corner, se_corner, ne_corner, nw_corner, npx, npy)
   fill_4corners!(w, 2, sw_corner, se_corner, ne_corner, nw_corner, npx, npy)
 
@@ -397,15 +388,13 @@ function c_sw!(data, k::Int64)
       end
   end
 
-  # ---------------
+  # ----------------------------------------------------------------------------
   #  Compute KE:
-  # ---------------
-
   #  Since uc = u*, i.e. the covariant wind perpendicular to the face edge, if
   #  we want to compute kinetic energy we will need the true coordinate-parallel
   #  covariant wind, computed through u = uc*sina + v*cosa.
-  # 
   #  Use the alpha for the cell KE is being computed in.
+  # ----------------------------------------------------------------------------
   for j = js-1:jep1
       for i = is-1:iep1
           if ua[i, j] > 0.
@@ -456,10 +445,10 @@ function c_sw!(data, k::Int64)
       end
   end
 
-  # -------------------------------
+  # ------------------------------------------------------------------
   # Compute circulation on C grid
-  # -------------------------------
   # To consider using true co - variant winds at face edges?
+  # ------------------------------------------------------------------
   for j = js-1:je+1
       for i = is:ie+1
           fx[i, j] = uc[i, j] * dxc[i, j]
@@ -500,13 +489,15 @@ function c_sw!(data, k::Int64)
           vort[i, j] = fC[i, j] + rarea_c[i, j] * vort[i, j]
       end
   end
-  # ------------------------------
+  
+  # ------------------------------------------------------------------------------
   # Transport absolute vorticity:
-  # ------------------------------
+  
   # To go from v to contravariant v at the edges, we divide by sin_sg;
   # but we  must multiply by sin_sg to get the proper flux.
   # These cancel, leaving us with fy1 = dt2 * v at the edges.
   # [For the same reason we only divide by sin instead of sin^2 in the interior]
+  # ------------------------------------------------------------------------------
   for j = js:je
       #DEC$ VECTOR ALWAYS
       for i = is:iep1
@@ -663,12 +654,12 @@ end # function divergence_corner
 #  in the halo
 # -------------------------------------------------------------------
 function d2a2c_vect!(data, k::Int64)
-  
+
   @unpack sw_corner, se_corner, ne_corner, nw_corner,
   sin_sg, cosa_u, cosa_v, cosa_s, rsin_u, rsin_v,
   rsin2, dxa, dya, u, v, ua, va, uc, vc, ut, vt,
   is, js, ie, je, isd, ied, jsd, jed, npx, npy = data
-  
+
   # "slice the 3d arrays to 2d arrays"
   u =       @view u[:,:,k]
   v =       @view v[:,:,k]
@@ -678,13 +669,13 @@ function d2a2c_vect!(data, k::Int64)
   va =      @view va[:,:,k]
   ut =      @view ut[:,:,k]
   vt =      @view vt[:,:,k]
-  
+
   # Convert corners from Int32 to Bool for Julia conditional statements
   sw_corner = !iszero(sw_corner)
   se_corner = !iszero(se_corner)
   ne_corner = !iszero(ne_corner)
   nw_corner = !iszero(nw_corner)
-  
+
   # 4-pt Lagrange interpolation
   a1 =  0.5625
   a2 = -0.0625
@@ -694,11 +685,11 @@ function d2a2c_vect!(data, k::Int64)
   c3 =  5 / 14
 
   indexdim(a, b) = b - a + 1
-  
+
   # Local Variables
   utmp = OffsetArray(fill(1.e8, (indexdim(isd,ied),indexdim(jsd,jed))), isd:ied, jsd:jed)
   vtmp = OffsetArray(fill(1.e8, (indexdim(isd,ied),indexdim(jsd,jed))), isd:ied, jsd:jed)
-  
+
   # -----------------------------
   # Interior:
   # -----------------------------
@@ -712,7 +703,7 @@ function d2a2c_vect!(data, k::Int64)
       vtmp[i, j] = a2 * (v[i-1, j] + v[i+2, j]) + a1 * (v[i, j] + v[i+1, j])
     end
   end
-  
+
   # -----------------------------
   # edges:
   # -----------------------------
@@ -724,7 +715,7 @@ function d2a2c_vect!(data, k::Int64)
       end
     end
   end
-  
+
   if je + 1 == npy || jed >= npy - 4
     for j = npy-3:jed
       for i = isd:ied
@@ -733,7 +724,7 @@ function d2a2c_vect!(data, k::Int64)
       end
     end
   end
-  
+
   if is == 1 || isd < 4
     for j = max(4, jsd): min(npy-4, jed)
       for i = isd:3
@@ -742,7 +733,7 @@ function d2a2c_vect!(data, k::Int64)
       end
     end
   end
-  
+
   if ie + 1 == npx || ied >= npx - 4
     for j = max(4, jsd): min(npy-4, jed)
       for i = npx-3:ied
@@ -751,14 +742,14 @@ function d2a2c_vect!(data, k::Int64)
       end
     end
   end
-  
+
   for j = js-2:je+2
     for i = is-2:ie+2
       ua[i, j] = (utmp[i, j] - vtmp[i, j] * cosa_s[i, j]) * rsin2[i, j]
       va[i, j] = (vtmp[i, j] - utmp[i, j] * cosa_s[i, j]) * rsin2[i, j]
     end
   end
-  
+
   # A - > C
   # -----------------------------
   # Fix the edges
@@ -784,10 +775,10 @@ function d2a2c_vect!(data, k::Int64)
       utmp[i, npy] = vtmp[0, je+i]
     end
   end
-  
+
   ifirst = max(3,     is-1)
   ilast  = min(npx-2, ie+2)
-  
+
   # ----------------------------------------------------------
   # 4th order interpolation for interior points:
   # -----------------------------------------------------------
@@ -797,7 +788,7 @@ function d2a2c_vect!(data, k::Int64)
       ut[i, j] = (uc[i, j] - v[i, j] * cosa_u[i, j]) * rsin_u[i, j]
     end
   end
-  
+
   # Xdir:
   if sw_corner
     ua[-1, 0] = -va[0, 2]
@@ -815,7 +806,7 @@ function d2a2c_vect!(data, k::Int64)
     ua[-1, npy] = va[0, npy-2]
     ua[ 0, npy] = va[0, npy-1]
   end
-  
+
   if is == 1
     for j = js-1:je+1
       uc[0, j] = c1 * utmp[-2, j] + c2 * utmp[-1, j] + c3 * utmp[0, j]
@@ -830,7 +821,7 @@ function d2a2c_vect!(data, k::Int64)
       ut[0, j] = (uc[0, j] - v[0, j] * cosa_u[0, j]) * rsin_u[0, j]
       ut[2, j] = (uc[2, j] - v[2, j] * cosa_u[2, j]) * rsin_u[2, j]
     end
-    
+
     if ie + 1 == npx
       for j = js-1:je+1
         uc[npx-1, j] =
@@ -850,7 +841,7 @@ function d2a2c_vect!(data, k::Int64)
     end
     
   end
-  
+
   # ---------
   # Ydir:
   # ---------
@@ -890,7 +881,7 @@ function d2a2c_vect!(data, k::Int64)
     va[0,   npy] = ua[1, npy]
     va[0, npy+1] = ua[2, npy]
   end
-  
+
   for j = js-1:je+2
     if j == 1
       for i = is-1:ie+1
@@ -939,9 +930,9 @@ function edge_interpolate4!(ua, dxa)
   
   u0L = 0.5 * ((2.0 * dxa[2] + dxa[1]) * ua[2] - dxa[2] * ua[1]) / (dxa[1] + dxa[2])
   u0R = 0.5 * ((2.0 * dxa[3] + dxa[4]) * ua[3] - dxa[3] * ua[4]) / (dxa[3] + dxa[4])
-  
+
   return u0L + u0R
-  
+
   # This is the original edge - interpolation code, which makes
   # a relatively small increase in the error in unstretched case 2.
   #
@@ -983,7 +974,7 @@ function fill2_4corners!(q1, q2, dir, sw_corner, se_corner, ne_corner, nw_corner
     end
 
   end
-  
+
   if dir == 2
     if sw_corner 
       q1[0,  0] = q1[1, 0]
@@ -1009,10 +1000,10 @@ function fill2_4corners!(q1, q2, dir, sw_corner, se_corner, ne_corner, nw_corner
       q2[npx, npy]   = q2[npx-1, npy]
       q2[npx, npy+1] = q2[npx-2, npy]
     end
-    
+
   end
 
-    return nothing
+  return nothing
 end # function fill2_4corners
 
 #----------------------------------------------------------------------------------
@@ -1039,7 +1030,9 @@ function fill_4corners!(q, dir, sw_corner, se_corner, ne_corner, nw_corner, npx,
       q[npx,   npy] = q[npx, npy-1]
       q[npx+1, npy] = q[npx, npy-2]
     end
+
   end
+
   if dir == 2
     if sw_corner
       q[0,  0] = q[1, 0]
@@ -1057,7 +1050,9 @@ function fill_4corners!(q, dir, sw_corner, se_corner, ne_corner, nw_corner, npx,
       q[npx, npy  ] = q[npx-1, npy]
       q[npx, npy+1] = q[npx-2, npy]
     end
+
   end
+
   return nothing
 end #function fill_4corners
 
@@ -1223,7 +1218,7 @@ function interpolate_state!(original_state, interpFactor::Int64)
   interpolateArray3D!(u, odims, new_u, idims, interpFactor)
   new_vc = OffsetArray{Float64, 3}(undef, idims[1]:idims[2], idims[3]:idims[4], idims[5]: idims[6])
   interpolateArray3D!(vc, odims, new_vc, idims, interpFactor)
-  
+
   odims[1] = isd
   odims[2] = ied + 1
   odims[3] = jsd
