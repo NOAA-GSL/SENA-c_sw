@@ -144,7 +144,7 @@ sh build.sh
 
 1. All tests fail on my machine.
 
-    Check to make sure git-lfs is installed and that all files in `test/data/inputs` are NetCDF 
+    Check to make sure git-lfs is installed and that all files in `../test/data/inputs` are NetCDF 
     data files and are not text. Run `git lfs pull` to download NetCDF files if necessary.
 
 2. I get `Skipping object checkout, Git LFS is not installed.` when running `git lfs pull`

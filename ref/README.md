@@ -41,15 +41,15 @@ Some systems that use modules to manage software provide git with git-lfs suppor
 module (e.g. `module load git`).  If you are using a system that uses modules, use
 `module avail` to look for alternative versions of git that may have git-lfs support.
 
-Make sure the files in `data/inputs` are NetCDF data files (not text) before proceeding to
+Make sure the files in `../test/data/inputs` are NetCDF data files (not text) before proceeding to
 the build step. A simple way to do that is with the file command as shown below:
 
 ```
 $ file data/inputs/*
-data/inputs/c_sw_12x24.nc: NetCDF Data Format data
-data/inputs/c_sw_24x24.nc: NetCDF Data Format data
-data/inputs/c_sw_48x24.nc: NetCDF Data Format data
-data/inputs/c_sw_48x48.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_12x24.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_24x24.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_48x24.nc: NetCDF Data Format data
+../test/data/inputs/c_sw_48x48.nc: NetCDF Data Format data
 ```
 
 **NOTE**: If you cloned the repository with a version of git without git-lfs installed, or before you ran `git lfs install`, you
