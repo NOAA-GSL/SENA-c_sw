@@ -778,7 +778,7 @@ contains
   !------------------------------------------------------------------
   ! fill2_4corners
   !
-  ! This routine fills the 4 corners of the scalar fields only as needed by c_core
+  ! This routine fill the 4 corners of the scalar fileds only as needed by c_core
   !------------------------------------------------------------------
   subroutine fill2_4corners(q1, q2, dir, sw_corner, se_corner, ne_corner, nw_corner)
 
@@ -862,7 +862,7 @@ contains
   !------------------------------------------------------------------
   ! fill_4corners
   !
-  ! This routine fills the 4 corners of the scalar fields only as needed by c_core
+  ! This routine fill the 4 corners of the scalar fileds only as needed by c_core
   !------------------------------------------------------------------
   subroutine fill_4corners(q, dir, sw_corner, se_corner, ne_corner, nw_corner)
 
