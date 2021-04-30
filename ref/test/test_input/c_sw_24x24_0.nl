@@ -13,6 +13,6 @@
 /
 
 &decomposition
-  rows=2
-  cols=2
+  rows=1
+  cols=1
 /

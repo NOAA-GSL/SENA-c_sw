@@ -8,9 +8,13 @@ list( APPEND c_sw_test_data
 )
 
 list( APPEND c_sw_test_input
+  test_input/c_sw_12x24_0_2x2.nl
   test_input/c_sw_12x24_0.nl
+  test_input/c_sw_24x24_0_2x2.nl
   test_input/c_sw_24x24_0.nl
+  test_input/c_sw_48x24_0_2x2.nl
   test_input/c_sw_48x24_0.nl
+  test_input/c_sw_48x48_0_2x2.nl
   test_input/c_sw_48x48_0.nl
   test_input/c_sw_12x24_3.nl
   test_input/c_sw_24x24_3.nl
@@ -115,7 +119,7 @@ if ( ENABLE_MPI )
 
   # 12 x 24 workload with 4 MPI ranks
   add_test(NAME regression_12x24_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_12x24_0.nl")
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_12x24_0_2x2.nl")
   add_test(NAME compare_12x24_0_rank1
            COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0000 test_output/c_sw_12x24_0.test)
   add_test(NAME compare_12x24_0_rank2
@@ -127,7 +131,7 @@ if ( ENABLE_MPI )
 
   # 24 x 24 workload with 4 MPI ranks
   add_test(NAME regression_24x24_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_24x24_0.nl")
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_24x24_0_2x2.nl")
   add_test(NAME compare_24x24_0_rank1
            COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0000 test_output/c_sw_24x24_0.test)
   add_test(NAME compare_24x24_0_rank2
@@ -139,7 +143,7 @@ if ( ENABLE_MPI )
 
   # 48 x 24 workload with 4 MPI ranks
   add_test(NAME regression_48x24_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x24_0.nl")
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x24_0_2x2.nl")
   add_test(NAME compare_48x24_0_rank1
            COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0000 test_output/c_sw_48x24_0.test)
   add_test(NAME compare_48x24_0_rank2
@@ -151,7 +155,7 @@ if ( ENABLE_MPI )
 
   # 48 x 48 workload with 4 MPI ranks
   add_test(NAME regression_48x48_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x48_0.nl")
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x48_0_2x2.nl")
   add_test(NAME compare_48x48_0_rank1
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0000 test_output/c_sw_48x48_0.test)
   add_test(NAME compare_48x48_0_rank2
