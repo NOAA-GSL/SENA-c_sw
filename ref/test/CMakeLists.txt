@@ -8,12 +8,16 @@ list( APPEND c_sw_test_data
 )
 
 list( APPEND c_sw_test_input
+  test_input/c_sw_12x24_0_1x4.nl
   test_input/c_sw_12x24_0_2x2.nl
   test_input/c_sw_12x24_0.nl
+  test_input/c_sw_24x24_0_1x4.nl
   test_input/c_sw_24x24_0_2x2.nl
   test_input/c_sw_24x24_0.nl
+  test_input/c_sw_48x24_0_1x4.nl
   test_input/c_sw_48x24_0_2x2.nl
   test_input/c_sw_48x24_0.nl
+  test_input/c_sw_48x48_0_1x4.nl
   test_input/c_sw_48x48_0_2x2.nl
   test_input/c_sw_48x48_0.nl
   test_input/c_sw_12x24_3.nl
@@ -117,52 +121,100 @@ if ( ENABLE_MPI )
   add_test(NAME compare_48x48_0
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0000 test_output/c_sw_48x48_0.test)
 
-  # 12 x 24 workload with 4 MPI ranks
-  add_test(NAME regression_12x24_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_12x24_0_2x2.nl")
-  add_test(NAME compare_12x24_0_rank1
+  # 12 x 24 workload with 4 MPI ranks (1x4)
+  add_test(NAME regression_12x24_0_procs4_1x4
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_12x24_0_1x4.nl")
+  add_test(NAME compare_12x24_0_rank1_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0000 test_output/c_sw_12x24_0.test)
-  add_test(NAME compare_12x24_0_rank2
+  add_test(NAME compare_12x24_0_rank2_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0001 test_output/c_sw_12x24_0.test)
-  add_test(NAME compare_12x24_0_rank3
+  add_test(NAME compare_12x24_0_rank3_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0002 test_output/c_sw_12x24_0.test)
-  add_test(NAME compare_12x24_0_rank4
+  add_test(NAME compare_12x24_0_rank4_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0003 test_output/c_sw_12x24_0.test)
 
-  # 24 x 24 workload with 4 MPI ranks
-  add_test(NAME regression_24x24_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_24x24_0_2x2.nl")
-  add_test(NAME compare_24x24_0_rank1
+  # 12 x 24 workload with 4 MPI ranks (2x2)
+  add_test(NAME regression_12x24_0_procs4_2x2
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_12x24_0_2x2.nl")
+  add_test(NAME compare_12x24_0_rank1_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0000 test_output/c_sw_12x24_0.test)
+  add_test(NAME compare_12x24_0_rank2_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0001 test_output/c_sw_12x24_0.test)
+  add_test(NAME compare_12x24_0_rank3_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0002 test_output/c_sw_12x24_0.test)
+  add_test(NAME compare_12x24_0_rank4_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_12x24_0.log.0003 test_output/c_sw_12x24_0.test)
+
+  # 24 x 24 workload with 4 MPI ranks (1x4)
+  add_test(NAME regression_24x24_0_procs4_1x4
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_24x24_0_1x4.nl")
+  add_test(NAME compare_24x24_0_rank1_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0000 test_output/c_sw_24x24_0.test)
-  add_test(NAME compare_24x24_0_rank2
+  add_test(NAME compare_24x24_0_rank2_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0001 test_output/c_sw_24x24_0.test)
-  add_test(NAME compare_24x24_0_rank3
+  add_test(NAME compare_24x24_0_rank3_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0002 test_output/c_sw_24x24_0.test)
-  add_test(NAME compare_24x24_0_rank4
+  add_test(NAME compare_24x24_0_rank4_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0003 test_output/c_sw_24x24_0.test)
 
-  # 48 x 24 workload with 4 MPI ranks
-  add_test(NAME regression_48x24_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x24_0_2x2.nl")
-  add_test(NAME compare_48x24_0_rank1
+  # 24 x 24 workload with 4 MPI ranks (2x2)
+  add_test(NAME regression_24x24_0_procs4_2x2
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_24x24_0_2x2.nl")
+  add_test(NAME compare_24x24_0_rank1_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0000 test_output/c_sw_24x24_0.test)
+  add_test(NAME compare_24x24_0_rank2_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0001 test_output/c_sw_24x24_0.test)
+  add_test(NAME compare_24x24_0_rank3_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0002 test_output/c_sw_24x24_0.test)
+  add_test(NAME compare_24x24_0_rank4_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_24x24_0.log.0003 test_output/c_sw_24x24_0.test)
+
+  # 48 x 24 workload with 4 MPI ranks (1x4)
+  add_test(NAME regression_48x24_0_procs4_1x4
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x24_0_1x4.nl")
+  add_test(NAME compare_48x24_0_rank1_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0000 test_output/c_sw_48x24_0.test)
-  add_test(NAME compare_48x24_0_rank2
+  add_test(NAME compare_48x24_0_rank2_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0001 test_output/c_sw_48x24_0.test)
-  add_test(NAME compare_48x24_0_rank3
+  add_test(NAME compare_48x24_0_rank3_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0002 test_output/c_sw_48x24_0.test)
-  add_test(NAME compare_48x24_0_rank4
+  add_test(NAME compare_48x24_0_rank4_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0003 test_output/c_sw_48x24_0.test)
 
-  # 48 x 48 workload with 4 MPI ranks
-  add_test(NAME regression_48x48_0_procs4
-           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x48_0_2x2.nl")
-  add_test(NAME compare_48x48_0_rank1
+  # 48 x 24 workload with 4 MPI ranks (2x2)
+  add_test(NAME regression_48x24_0_procs4_2x2
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x24_0_2x2.nl")
+  add_test(NAME compare_48x24_0_rank1_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0000 test_output/c_sw_48x24_0.test)
+  add_test(NAME compare_48x24_0_rank2_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0001 test_output/c_sw_48x24_0.test)
+  add_test(NAME compare_48x24_0_rank3_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0002 test_output/c_sw_48x24_0.test)
+  add_test(NAME compare_48x24_0_rank4_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x24_0.log.0003 test_output/c_sw_48x24_0.test)
+
+  # 48 x 48 workload with 4 MPI ranks (1x4)
+  add_test(NAME regression_48x48_0_procs4_1x4
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x48_0_1x4.nl")
+  add_test(NAME compare_48x48_0_rank1_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0000 test_output/c_sw_48x48_0.test)
-  add_test(NAME compare_48x48_0_rank2
+  add_test(NAME compare_48x48_0_rank2_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0001 test_output/c_sw_48x48_0.test)
-  add_test(NAME compare_48x48_0_rank3
+  add_test(NAME compare_48x48_0_rank3_1x4
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0002 test_output/c_sw_48x48_0.test)
-  add_test(NAME compare_48x48_0_rank4
+  add_test(NAME compare_48x48_0_rank4_1x4
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0003 test_output/c_sw_48x48_0.test)
+
+  # 48 x 48 workload with 4 MPI ranks (2x2)
+  add_test(NAME regression_48x48_0_procs4_2x2
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../src/c_sw test_input/c_sw_48x48_0_2x2.nl")
+  add_test(NAME compare_48x48_0_rank1_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0000 test_output/c_sw_48x48_0.test)
+  add_test(NAME compare_48x48_0_rank2_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0001 test_output/c_sw_48x48_0.test)
+  add_test(NAME compare_48x48_0_rank3_2x2
+           COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0002 test_output/c_sw_48x48_0.test)
+  add_test(NAME compare_48x48_0_rank4_2x2
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0003 test_output/c_sw_48x48_0.test)
 
 # Tests when MPI is not enabled
