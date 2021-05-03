@@ -231,9 +231,11 @@ program sw_driver
   ! Turn off GPTL if enabled
 #ifdef ENABLE_GPTL
   if (do_profile == 1 .or. mpi_run) then
-    !Uncommemt the next line to generate timing information for each rank
-    !ret = gptlpr (rank)
+    !Commemt the next line to suppress timing information for each rank
+    ret = gptlpr (rank)
+#ifdef ENABLE_MPI
     ret = gptlpr_summary (MPI_COMM_WORLD)
+#endif
     ret = gptlfinalize()
   end if
 #endif
