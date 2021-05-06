@@ -1171,6 +1171,9 @@ contains
     if (allocated(recv_buffer)) then
       deallocate(recv_buffer)
     endif
+    if (allocated(statuses)) then
+      deallocate(statuses)
+    endif
 
   end subroutine deallocate_state
 
