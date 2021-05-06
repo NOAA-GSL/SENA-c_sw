@@ -102,11 +102,9 @@ program sw_driver
   ! Print out affinity diagnostic information
   ret = print_affinity()
 
-  ! Initialize GPTL if enabled or if this is an MPI run
 #ifdef ENABLE_GPTL
-  if (do_profile == 1 .or. mpi_run ) then ! GPTL automatically profiles MPI calls
-    ret = GPTLinitialize()
-  end if
+  ! Initialize GPTL
+  ret = GPTLinitialize()
 #endif
 
   ! Append statistics log file name with MPI rank if MPI is enabled
@@ -131,9 +129,6 @@ program sw_driver
 
   ! Get the MPI task neighbore for the exchange
   call get_neighbors
-
-  ! Allocate statuses for MPI_WAITALL: 0:15 because there are 8 sends and 8 receives
-  allocate( statuses(MPI_STATUS_SIZE, 0:15) )
 #endif
 
   ! Write out configuration settings to statistics log file
@@ -236,8 +231,8 @@ program sw_driver
 #ifdef ENABLE_MPI
     ret = gptlpr_summary (MPI_COMM_WORLD)
 #endif
-    ret = gptlfinalize()
   end if
+  ret = gptlfinalize()
 #endif
 
 #ifdef ENABLE_MPI

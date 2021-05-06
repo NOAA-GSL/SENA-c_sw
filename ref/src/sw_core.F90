@@ -27,6 +27,9 @@ module sw_core_mod
 #ifdef ENABLE_GPTL
   use gptl
 #endif
+#ifdef ENABLE_MPI
+  use mpi
+#endif
 
   implicit none
 
@@ -994,8 +997,12 @@ contains
     allocate(ut     (isd:ied,   jsd:jed,   npz))
     allocate(vt     (isd:ied,   jsd:jed,   npz))
     allocate(divg_d (isd:ied+1, jsd:jed+1, npz))
-    allocate(send_buffer(max_halo_size,8)) !There are eight neighbors, four sides and four corners.
-    allocate(recv_buffer(max_halo_size,8)) !There are eight neighbors, four sides and four corners.
+#ifdef ENABLE_MPI
+    allocate(send_buffer(max_halo_size,8)) !8 neighbors: four sides and 4 corners.
+    allocate(recv_buffer(max_halo_size,8)) !8 neighbors: four sides and 4 corners.
+    ! Allocate statuses for MPI_WAITALL: 0:15 because there are 8 sends and 8 receives
+    allocate(statuses(MPI_STATUS_SIZE, 0:15))
+#endif
 
     ! Initialize state arrays
     rarea(:,:) = 0.0
