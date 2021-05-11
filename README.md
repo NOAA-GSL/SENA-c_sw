@@ -52,11 +52,10 @@ for testing and validation.
 Contains the source tree for the reference implementation. See the README
 in that directory for details about how to run and test it.
 
-### `foo/`
+### `Julia/`
 
-Alternative implementations will be stored in a new top-level subdirectory
-along side the reference implementation. In this documentation, `foo/` is
-simply a place holder for names given to future implementations.
+Contains the source tree for the Julia implementation. See the README
+in that directory for details about how to run and test it.
 
 # Contributing
 
