@@ -95,7 +95,7 @@ module sw_core_mod
   real, allocatable :: dxa(:,:), dya(:,:)
   real, allocatable :: delpc(:,:,:), delp(:,:,:)
   real, allocatable :: ptc(:,:,:), pt(:,:,:)
-  real, allocatable :: u(:,:,:), v(:,:,:), w(:,:,:), usave(:,:,:)
+  real, allocatable :: u(:,:,:), v(:,:,:), w(:,:,:)
   real, allocatable :: uc(:,:,:), vc(:,:,:), wc(:,:,:)
   real, allocatable :: ua(:,:,:), va(:,:,:)
   real, allocatable :: ut(:,:,:), vt(:,:,:)
@@ -986,7 +986,6 @@ contains
     allocate(ptc    (isd:ied,   jsd:jed,   npz))
     allocate(pt     (isd:ied,   jsd:jed,   npz))
     allocate(u      (isd:ied,   jsd:jed+1, npz))
-    allocate(usave  (isd:ied,   jsd:jed+1, npz))
     allocate(v      (isd:ied+1, jsd:jed,   npz))
     allocate(w      (isd:ied,   jsd:jed,   npz))
     allocate(uc     (isd:ied+1, jsd:jed,   npz))
@@ -1041,7 +1040,6 @@ contains
     ut(:,:,:) = 0.0
     vt(:,:,:) = 0.0
     divg_d(:,:,:) = 0.0
-    usave (:,:,:) = 0.0
 
   end subroutine allocate_state
 
@@ -1131,9 +1129,6 @@ contains
     end if
     if (allocated(u)) then
       deallocate(u)
-    end if
-    if (allocated(usave)) then
-      deallocate(usave)
     end if
     if (allocated(v)) then
       deallocate(v)
@@ -2056,24 +2051,6 @@ contains
     endif
 
   end subroutine unpack
-
-  subroutine test_exchange(matches)
-
-    logical,intent (out) :: matches
-    integer              :: nz,j,i
-    matches = .true.
-    do nz = 1,npz
-      do j=jsd,jed+1
-        do i=isd,ied
-          if( u(i,j,nz) /= usave(i,j,nz) ) then
-            matches = .false.
-            print*,'Error: u /= usave',nz,j,i,u(i,j,nz),usave(i,j,nz)
-          endif
-        enddo
-      enddo
-    enddo
-
-  end subroutine test_exchange
 
 #endif
   !------------------------------------------------------------------

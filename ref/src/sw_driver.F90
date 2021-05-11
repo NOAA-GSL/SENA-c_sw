@@ -22,7 +22,6 @@ program sw_driver
   integer :: narg                               ! # of command line arguments
   integer :: count_start, count_end, count_rate ! Timer start/stop
   integer :: log_file_unit                      ! unit number for writing out log files
-  logical :: mpi_run = .false.                  ! True means this is an MPI run
   integer, external :: print_affinity           ! External subroutine
 #ifdef ENABLE_MPI
   integer :: ierr                               ! Error return
@@ -44,7 +43,6 @@ program sw_driver
   namelist /decomposition/ rows,cols                      ! Defined in sw_core_mod
 
 #ifdef ENABLE_MPI
-  mpi_run = .true.
   call mpi_init(ierr)
   if(ierr /= 0) then
     print*,'Error in sw_driver: Error initializing MPI error =',ierr
@@ -93,8 +91,10 @@ program sw_driver
   ! Read the debug settings from the namelist
   read(nl_unit, nml=debug)
 
+#ifdef ENABLE_MPI
   ! Read the MPI decomposition from the namelist
   read(nl_unit, nml=decomposition)
+#endif
 
   ! Get OMP_NUM_THREADS value
   nthreads = omp_get_max_threads()
@@ -150,9 +150,6 @@ program sw_driver
     stop 1
   endif
 
-  ! Copy u to usave for testing the exchange
-    usave = u
-
   ! Get the start time
   call system_clock(count_start, count_rate)
 
@@ -169,14 +166,6 @@ program sw_driver
      ret = gptlstop('exchange')
   end if
 #endif
-
-  !Test the exchange
-  call test_exchange(matches)
-
-  if( .not. matches) then
-    print*,'Error in sw_driver: Exchange error, halo does not match perimeter, rank= ',rank
-    stop
-  endif
 #endif
 
 #ifdef ENABLE_GPTL
@@ -225,8 +214,8 @@ program sw_driver
 
   ! Turn off GPTL if enabled
 #ifdef ENABLE_GPTL
-  if (do_profile == 1 .or. mpi_run) then
-    !Commemt the next line to suppress timing information for each rank
+  if (do_profile == 1 ) then
+    !For ENABLE_MPI commemt the next line to suppress timing information for each rank
     ret = gptlpr (rank)
 #ifdef ENABLE_MPI
     ret = gptlpr_summary (MPI_COMM_WORLD)
