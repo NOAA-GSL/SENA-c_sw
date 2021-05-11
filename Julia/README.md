@@ -54,17 +54,17 @@ Alternatively, you can reclone the repository with git-lfs installed.
 ## Building the kernel
 
 * [Julia v1.6](https://julialang.org/downloads/) is required to build & test the kernel.
-* Internet access is required to install the Julia package dependencies. 
+* Internet access is required to install the Julia Pkg dependencies. 
 
 
 ### Basic build procedure (from the directory containing this file)
 
-From this directory, open the Julia REPL.
+First, open the Julia REPL and activate this project specific environment:
 
 ```bash
 $ julia --project
 ```
-From within the Julia REPL, run the following commands. 
+Within the Julia REPL, run the following commands:
 
 ```julia 
 using Pkg 
@@ -79,11 +79,22 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
 ### Machines that do not have Julia installed
 
-#### TODO:
-* Create a 'standalone' Julia implementation.
+1. Install the binary release by downloading and expanding the tarball (e.g. `julia-1.6.1-linux-x86_64.tar.gz`) where you want to put it.
+2. Create a module to load it.  Make sure to add both the `lib/` and `lib/julia` directories to `LD_LIBRARY_PATH`.  Suggested module (in LUA) would look like:
+```LUA
+local helpMsg = [[
+Sets up the environment for julia version 1.6.1
+]]
+help(helpMsg)
+prepend_path("PATH","/home/USER/opt/julia/1.6.1/bin")
+prepend_path("LD_LIBRARY_PATH","/home/USER/opt/julia/1.6.1/lib")
+prepend_path("LD_LIBRARY_PATH","/home/USER/opt/julia/1.6.1/lib/julia")
+setenv("SSL_CERT_FILE", "/etc/ssl/certs/ca-bundle.crt")
+```
 
-* Use: [BinaryBuilder.jl](https://github.com/JuliaPackaging/BinaryBuilder.jl)
-       & [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl)
+### Machines that do not have internet access 
+
+If you'd like to run the Julia implementation on an HPC that does not have internet access, first you must build it on a system with the same OS/Architecture (i.e. Linux x86 64 system) that does have an internet connection. Then, copy the resulting `~/.julia` over to the system you'd like to run on. This will preload the dependencies, so they will not need to be downloaded.
 
 ## Testing the kernel
 
@@ -100,7 +111,7 @@ $ julia --project=. -e 'mkdir("test/test_output")'
 $ julia --project=. -e 'mkpath("../test/data/outputs")'
 ```
 
-From the Julia REPL: 
+Once the test output directories are created, you can run the test file from the Julia REPL: 
 
 ```julia 
 include("test/test_c_sw.jl")
@@ -111,7 +122,7 @@ If you'd prefer not to enter the Julia REPL, run:
 $ julia test/test_c_sw.jl
 ```
 
-To run a specific test call julia with the `test/single_regression.jl` file providing the argument of the dataset you'd like to test. The available datasets are contained in the [inputs.TOML](test/data/inputsinputs/inputs.toml) file.
+To run a specific test, call julia with the `test/single_regression.jl` file and provide the argument of the dataset you'd like to test. The available datasets are contained in the [inputs.TOML](test/data/inputs/inputs.toml) file.
 
 For example: 
 
@@ -127,20 +138,61 @@ For convenience, a build script is provided that builds the code and runs the te
 sh build.sh
 ```
 
-## Installation and running
+### Increasing Data Size
 
+With the coming exascale supercomputers, faster computations and larger memory per node, 
+this kernel has the functionality to increase the database under control of the user.  The 
+variable `interpFactor` in the [inputs.TOML](test/data/inputs/inputs.toml) file allows the user to increase the size of the 
+database.  The variable `interpFactor` is a positive integer or zero which controls the 
+addition of interpolated points to the database.  If `interpFactor` is zero, no additional 
+points are added to the database.
+
+For example:
+
+An interpolation factor of 1 means 1 new interpolated element is added between 
+the original data.  So, a 3x3 matrix with `interpFactor=1` is interpolated
+and becomes a 5x5 matrix
+
+The x's are points from the original data.  The o's are points to be interpolated 
+between the original data. 
+
+```
+[ x x x ]     ==> [x o x o x]
+[ x x x ]         [o o o o o]
+[ x x x ]         [x o x o x]
+                  [o o o o o]
+                  [x o x o x]
+```
+
+And an `interpFactor=2`, transforms a 3x3 matrix into a 7x7 matrix.
+
+```
+[ x x x ]     ==> [x o o x o o x]
+[ x x x ]         [o o o o o o o]
+[ x x x ]         [o o o o o o o]
+                  [x o o x o o x]
+                  [o o o o o o o]
+                  [o o o o o o o]
+                  [x o o x o o x]
+```
+The `interpFactor` can be modified in the `inputs.TOML` file without rebuilding the kernel; 
+the interpolation is done "on the fly" before calling the computational kernel within 
+SENA-c_sw.  The reference text logs are correct for interpFactor 0 and 3 currently.  
+Alas, when you use another `interpFactor`, the numbers in the text logs change such that 
+a comparison to the reference text logs will not be exact.  That said, the text logs 
+should be numerically "close" to the reference texts, at least the first two or three 
+significant digits of each floating-point number should match.
 
 ## NOTES:
 
-## Here is a list of the files and what they contain.
-
+### Here is a list of the files and what they contain:
 
 - `src/` contains the kernel source code
 - `test/` contains the test files
 - `test/test_input` contains the test input TOML configuration file
 - `../test/data/output` is where test output data is written
 
-## Troubleshooting
+### Troubleshooting
 
 1. All tests fail on my machine.
 
