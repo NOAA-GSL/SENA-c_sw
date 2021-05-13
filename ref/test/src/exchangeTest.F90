@@ -95,6 +95,8 @@ program test_exchange_driver
       enddo
     enddo
 
+    rows=2*rows
+
   enddo !test=1, 3
 
   call MPI_Barrier(MPI_COMM_WORLD,ierr)
