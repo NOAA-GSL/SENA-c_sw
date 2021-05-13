@@ -70,15 +70,14 @@ endforeach()
 set(COMPARE_SH ${CMAKE_BINARY_DIR}/bin/c_sw_compare.sh)
 
 # Add unit tests here.
-list (APPEND test_src_files
+list (APPEND interpolateTest_src_files
   ${PROJECT_SOURCE_DIR}/src/interpolate.f90
   ${PROJECT_SOURCE_DIR}/test/src/interpolateTest.f90
 )
-add_executable (interpolateTest ${test_src_files} )
-
+add_executable (interpolateTest ${interpolateTest_src_files} )
 target_include_directories( interpolateTest SYSTEM PUBLIC ${NetCDF_INCLUDE_DIRS} )
-
 target_link_libraries( interpolateTest PUBLIC NetCDF::NetCDF_Fortran)
+
 if(OpenMP_FOUND)
     target_link_libraries( interpolateTest PUBLIC OpenMP::OpenMP_Fortran)
     target_link_libraries( interpolateTest PUBLIC OpenMP::OpenMP_C)
@@ -93,6 +92,32 @@ if ( MPI_FOUND )
   target_link_libraries( interpolateTest PUBLIC MPI::MPI_C )
 endif()
 
+if ( MPI_FOUND )
+  list (APPEND exchangeTest_src_files
+    ${PROJECT_SOURCE_DIR}/src/sw_core.F90
+    ${PROJECT_SOURCE_DIR}/src/netCDFModule.f90
+    ${PROJECT_SOURCE_DIR}/src/interpolate.f90
+    ${PROJECT_SOURCE_DIR}/test/src/exchangeTest.F90
+  )
+  add_executable (exchangeTest ${exchangeTest_src_files} )
+  target_include_directories( exchangeTest SYSTEM PUBLIC ${NetCDF_INCLUDE_DIRS} )
+  target_link_libraries( exchangeTest PUBLIC NetCDF::NetCDF_Fortran)
+
+  if(OpenMP_FOUND)
+      target_link_libraries( exchangeTest PUBLIC OpenMP::OpenMP_Fortran)
+      target_link_libraries( exchangeTest PUBLIC OpenMP::OpenMP_C)
+  endif()
+
+  if ( GPTL_FOUND )
+     target_link_libraries( exchangeTest PUBLIC GPTL::GPTL )
+  endif()
+
+  if ( MPI_FOUND )
+    target_link_libraries( exchangeTest PUBLIC MPI::MPI_Fortran )
+    target_link_libraries( exchangeTest PUBLIC MPI::MPI_C )
+  endif()
+
+endif()
 
 # Tests when MPI is enabled
 if ( ENABLE_MPI )
@@ -216,6 +241,9 @@ if ( ENABLE_MPI )
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0002 test_output/c_sw_48x48_0.test)
   add_test(NAME compare_48x48_0_rank4_2x2
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0003 test_output/c_sw_48x48_0.test)
+
+  add_test(NAME exchange
+           COMMAND bash -c "set -o pipefail; ../test/exchangeTest 2>&1 | tee test_output/exchangeTest.out")
 
 # Tests when MPI is not enabled
 else()
