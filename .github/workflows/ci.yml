@@ -111,6 +111,20 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 -DMPIEXEC_PREFLAGS=--oversubscribe ..
           make
           ctest --output-on-failure
+      
+      # Install Julia Pkg dependencies
+      - name: Install Julia Pkg dependencies
+        run:  |
+          cd Julia
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+      # Run c_sw Test Suite
+      - name: Run Julia c_sw tests
+        run: |
+           cd Julia
+           julia --project=. -e 'mkdir("test/test_output")'
+           julia --project=. -e 'mkpath("../test/data/outputs")'
+           julia --project=. test/test_c_sw.jl
 
   ubuntu_build:
     name: Ubuntu Build
@@ -215,3 +229,17 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_MPI=1 -DMPIEXEC_PREFLAGS=--oversubscribe ..
           make
           ctest --output-on-failure
+      
+      # Install Julia Pkg dependencies
+      - name: Install Julia Pkg dependencies
+        run:  |
+          cd Julia
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+      # Run c_sw Test Suite
+      - name: Run Julia c_sw tests
+        run: |
+          cd Julia
+          julia --project=. -e 'mkdir("test/test_output")'
+          julia --project=. -e 'mkpath("../test/data/outputs")'
+          julia --project=. test/test_c_sw.jl
