@@ -243,7 +243,7 @@ if ( ENABLE_MPI )
            COMMAND ${COMPARE_SH} test_output/c_sw_48x48_0.log.0003 test_output/c_sw_48x48_0.test)
 
   add_test(NAME exchange
-           COMMAND bash -c "set -o pipefail; ../test/exchangeTest 2>&1 | tee test_output/exchangeTest.out")
+           COMMAND bash -c "${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4 ${MPIEXEC_PREFLAGS} ../test/exchangeTest")
 
 # Tests when MPI is not enabled
 else()
