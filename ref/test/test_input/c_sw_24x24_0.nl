@@ -11,3 +11,8 @@
 &debug
   do_profile=0
 /
+
+&decomposition
+  rows=1
+  cols=1
+/
