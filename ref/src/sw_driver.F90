@@ -25,7 +25,6 @@ program sw_driver
   integer, external :: print_affinity           ! External subroutine
 #ifdef ENABLE_MPI
   integer :: ierr                               ! Error return
-  logical :: matches                            ! Used for testing exchange
 #endif
 
   ! Input configuration variables
