@@ -25,6 +25,7 @@ program sw_driver
   integer, external :: print_affinity           ! External subroutine
 #ifdef ENABLE_MPI
   integer :: ierr                               ! Error return
+  integer :: errorcode                          ! Error return for MPI_Abort
 #endif
 
   ! Input configuration variables
@@ -42,10 +43,11 @@ program sw_driver
   namelist /decomposition/ rows,cols                      ! Defined in sw_core_mod
 
 #ifdef ENABLE_MPI
-  call mpi_init(ierr)
+  call MPI_Init(ierr)
   if(ierr /= 0) then
     print*,'Error in sw_driver: Error initializing MPI error =',ierr
-    stop
+    call MPI_Abort(MPI_COMM_WORLD, errorcode, ierr)
+    stop 1
   endif
 #endif
 
@@ -58,17 +60,17 @@ program sw_driver
   narg = command_argument_count()
   if (narg /= 1) then
     write(*,*) "Usage: c_sw <namelist_file>"
-    stop 1
+    stop 2
   end if
 
 #ifdef ENABLE_MPI
   ! Get the MPI rank
-  call mpi_comm_rank(mpi_comm_world, rank, ierr)
+  call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierr)
   if(ierr /= 0) then
     print*,'Error in sw_driver: Error getting the rank',ierr,rank
   endif
   ! Get the number of MPI tasks
-  call mpi_comm_size(mpi_comm_world, nTasks, ierr)
+  call MPI_Comm_size(MPI_COMM_WORLD, nTasks, ierr)
   if(ierr /= 0) then
     print*,'Error in sw_driver: Error getting the number of MPI tasks',ierr,nTasks
     print*,'Error, number of MPI tasks =',ierr,nTasks
@@ -123,7 +125,8 @@ program sw_driver
     print*,'Error in sw_driver running in parallel mode'
     print*,'rows*cols must equal the number of MPI tasks'
     print*,'rank,rows,cols,nTasks=', rank,rows,cols,nTasks
-    stop
+    call MPI_Abort(MPI_COMM_WORLD, errorcode, ierr)
+    stop 3
   endif
 
   ! Get the MPI task neighbore for the exchange
@@ -146,7 +149,7 @@ program sw_driver
     ! Do nothing.
   else
     print *,"Error, InterpFactor less than zero."
-    stop 1
+    stop 4
   endif
 
   ! Get the start time
@@ -224,7 +227,7 @@ program sw_driver
 #endif
 
 #ifdef ENABLE_MPI
-  call mpi_finalize(ierr)
+  call MPI_Finalize(ierr)
 #endif
 
 if(rank == 0) then
