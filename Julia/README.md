@@ -33,7 +33,10 @@ Make sure the files in `../test/data/inputs` are NetCDF data files (not text) be
 the build step. A simple way to do that is with the file command as shown below:
 
 ```
-$ file test/data/inputs/*
+$ file ../test/data/inputs/*
+```
+Which should output:
+```
 ../test/data/inputs/c_sw_12x24.nc: NetCDF Data Format data
 ../test/data/inputs/c_sw_24x24.nc: NetCDF Data Format data
 ../test/data/inputs/c_sw_48x24.nc: NetCDF Data Format data
